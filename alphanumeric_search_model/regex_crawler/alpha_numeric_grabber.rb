@@ -15,7 +15,7 @@ require 'json'
             }
         }
     ],
-    :size => 5,
+    :size => 5000,
     :query => {
         :bool => {
             :filter => {
@@ -78,18 +78,18 @@ require 'json'
 regex_expressions = [
     '[0-9]+[a-z]+',
     "[a-z]+[0-9]+",
-    # "([a-z]+[0-9]*-[a-z]+[0-9]*)",
-    # "([a-z]+[0-9]*-[0-9]+[a-z]*)",
-    # "([0-9]+[a-z]*-[a-z]+[0-9]*)",
-    # "([0-9]+[a-z]*-[0-9]+[a-z]*)",
-    # "([a-z]+[0-9]*§[a-z]+[0-9]*)",
-    # "([a-z]+[0-9]*§[0-9]+[a-z]*)",
-    # "([0-9]+[a-z]*§[a-z]+[0-9]*)",
-    # "([0-9]+[a-z]*§[0-9]+[a-z]*)",
-    # "([a-z]+[0-9]*.[a-z]+[0-9]*)",
-    # "([a-z]+[0-9]*.[0-9]+[a-z]*)",
-    # "([0-9]+[a-z]*.[a-z]+[0-9]*)",
-    # "([0-9]+[a-z]*.[0-9]+[a-z]*)"
+    "([a-z]+[0-9]*-[a-z]+[0-9]*)",
+    "([a-z]+[0-9]*-[0-9]+[a-z]*)",
+    "([0-9]+[a-z]*-[a-z]+[0-9]*)",
+    "([0-9]+[a-z]*-[0-9]+[a-z]*)",
+    "([a-z]+[0-9]*§[a-z]+[0-9]*)",
+    "([a-z]+[0-9]*§[0-9]+[a-z]*)",
+    "([0-9]+[a-z]*§[a-z]+[0-9]*)",
+    "([0-9]+[a-z]*§[0-9]+[a-z]*)",
+    "([a-z]+[0-9]*.[a-z]+[0-9]*)",
+    "([a-z]+[0-9]*.[0-9]+[a-z]*)",
+    "([0-9]+[a-z]*.[a-z]+[0-9]*)",
+    "([0-9]+[a-z]*.[0-9]+[a-z]*)"
 ]
 
 def query_elasticsearch(url, index, request)
@@ -107,12 +107,12 @@ def push_to_elasticsearch(url, index, body)
         es_payload.push(JSON.generate({:index => {:_index => index, :_type => "_doc"}}))
         es_payload.push(JSON.generate(doc))
     end
-    puts (es_payload.join("\n") + "\n")
-    # HTTParty.post(
-    #     "#{url}/#{index}/_bulk",
-    #     :body => (es_payload.join("\n") + "\n"),
-    #     :headers => {'Content-Type' => 'application/json'}
-    # )
+    # puts (es_payload.join("\n") + "\n")
+    HTTParty.post(
+        "#{url}/#{index}/_bulk",
+        :body => (es_payload.join("\n") + "\n"),
+        :headers => {'Content-Type' => 'application/json'}
+    )
 end
 
 def create_i14y_doc(document, regex, field)
@@ -125,7 +125,7 @@ end
 def create_logstash_doc(document, regex, field)
     scan_field = field.gsub("params.", "")
     # puts scan_field
-    puts document["_source"]["params"][scan_field]
+    # puts document["_source"]["params"][scan_field]
     return {
         :affiliate => document["_source"]["params"]["affiliate"],
         :regex_patterns => document["_source"]["params"][scan_field].scan(Regexp.new(regex)).flatten
@@ -142,7 +142,7 @@ def crawl_es_index_with_field(es_url, index, field, regex)
                 {:from => num_docs})
         )
 
-        if results["hits"]["hits"].size == 0 or num_docs == 10
+        if results["hits"]["hits"].size == 0
             break
         end
         
