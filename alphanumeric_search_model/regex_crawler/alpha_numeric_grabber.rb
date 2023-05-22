@@ -164,7 +164,7 @@ def crawl_es_index_with_field(es_url, index, field, regex)
 
         # exit 0
 
-        puts JSON.pretty_generate(results)
+        # puts JSON.pretty_generate(results)
 
         # exit 0
         if results["hits"]["hits"].size == 0 or num_docs == 20
