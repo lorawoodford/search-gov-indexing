@@ -15,42 +15,42 @@ require 'json'
             }
         }
     ],
-    :size => 5,
+    :size => 5000,
     :query => {
         :bool => {
             :filter => {
                 :regex => { }
             }
         }
-    },
-    :_source => {
-        :includes => [
-            "extension",
-            "created",
-            "created_at",
-            "description",
-            "language",
-            "title",
-            "content",
-            "tags",
-            "path",
-            "promote",
-            "domain_name",
-            "basename",
-            "updated_at",
-            "title_en",
-            "updated",
-            "changed",
-            "url_path",
-            "click_count",
-            "mime_type",
-            "audience",
-            "searchgov_custom2",
-            "searchgov_custom3",
-            "searchgov_custom1",
-            "content_type",
-            "thumbnail_url"
-        ]
+    # },
+    # :_source => {
+    #     :includes => [
+    #         "extension",
+    #         "created",
+    #         "created_at",
+    #         "description",
+    #         "language",
+    #         "title",
+    #         "content",
+    #         "tags",
+    #         "path",
+    #         "promote",
+    #         "domain_name",
+    #         "basename",
+    #         "updated_at",
+    #         "title_en",
+    #         "updated",
+    #         "changed",
+    #         "url_path",
+    #         "click_count",
+    #         "mime_type",
+    #         "audience",
+    #         "searchgov_custom2",
+    #         "searchgov_custom3",
+    #         "searchgov_custom1",
+    #         "content_type",
+    #         "thumbnail_url"
+    #     ]
     }
 }
 
@@ -64,32 +64,32 @@ require 'json'
 @indices = {
     "production-i14y-documents-searchgov-v6-reindex_keyword" => [
         "title_en.raw",
-        # "title_en.raw.keyword",
-        # "content_en.raw",
-        # "content_en.raw.keyword"
+        "title_en.raw.keyword",
+        "content_en.raw",
+        "content_en.raw.keyword"
     ],
-    # "human-logstash-*" => [
-    #     "params.query.raw"
-    # ]
+    "human-logstash-*" => [
+        "params.query.raw"
+    ]
 }
 
-@es_url = "http://localhost:9200"
+@es_url = "http://es17x1:9200"
 
 regex_expressions = [
     '[0-9]+[a-z]+',
-    # "[a-z]+[0-9]+",
-    # "([a-z]+[0-9]*-[a-z]+[0-9]*)",
-    # "([a-z]+[0-9]*-[0-9]+[a-z]*)",
-    # "([0-9]+[a-z]*-[a-z]+[0-9]*)",
-    # "([0-9]+[a-z]*-[0-9]+[a-z]*)",
-    # "([a-z]+[0-9]*§[a-z]+[0-9]*)",
-    # "([a-z]+[0-9]*§[0-9]+[a-z]*)",
-    # "([0-9]+[a-z]*§[a-z]+[0-9]*)",
-    # "([0-9]+[a-z]*§[0-9]+[a-z]*)",
-    # "([a-z]+[0-9]*.[a-z]+[0-9]*)",
-    # "([a-z]+[0-9]*.[0-9]+[a-z]*)",
-    # "([0-9]+[a-z]*.[a-z]+[0-9]*)",
-    # "([0-9]+[a-z]*.[0-9]+[a-z]*)"
+    "[a-z]+[0-9]+",
+    "([a-z]+[0-9]*-[a-z]+[0-9]*)",
+    "([a-z]+[0-9]*-[0-9]+[a-z]*)",
+    "([0-9]+[a-z]*-[a-z]+[0-9]*)",
+    "([0-9]+[a-z]*-[0-9]+[a-z]*)",
+    "([a-z]+[0-9]*§[a-z]+[0-9]*)",
+    "([a-z]+[0-9]*§[0-9]+[a-z]*)",
+    "([0-9]+[a-z]*§[a-z]+[0-9]*)",
+    "([0-9]+[a-z]*§[0-9]+[a-z]*)",
+    "([a-z]+[0-9]*.[a-z]+[0-9]*)",
+    "([a-z]+[0-9]*.[0-9]+[a-z]*)",
+    "([0-9]+[a-z]*.[a-z]+[0-9]*)",
+    "([0-9]+[a-z]*.[0-9]+[a-z]*)"
 ]
 
 def query_elasticsearch(url, index, request)
