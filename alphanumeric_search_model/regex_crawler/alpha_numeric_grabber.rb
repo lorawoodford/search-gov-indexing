@@ -15,43 +15,43 @@ require 'json'
             }
         }
     ],
-    :size => 5000,
+    :size => 5,
     :query => {
         :bool => {
             :filter => {
                 :regex => { }
             }
         }
+    },
+    :_source => {
+        :includes => [
+            "extension",
+            "created",
+            "created_at",
+            "description",
+            "language",
+            "title",
+            "content",
+            "tags",
+            "path",
+            "promote",
+            "domain_name",
+            "basename",
+            "updated_at",
+            "title_en",
+            "updated",
+            "changed",
+            "url_path",
+            "click_count",
+            "mime_type",
+            "audience",
+            "searchgov_custom2",
+            "searchgov_custom3",
+            "searchgov_custom1",
+            "content_type",
+            "thumbnail_url"
+        ]
     }
-    # :_source => {
-    #     :includes => [
-    #         "extension",
-    #         "created",
-    #         "created_at",
-    #         "description",
-    #         "language",
-    #         "title",
-    #         "content",
-    #         "tags",
-    #         "path",
-    #         "promote",
-    #         "domain_name",
-    #         "basename",
-    #         "updated_at",
-    #         "title_en",
-    #         "updated",
-    #         "changed",
-    #         "url_path",
-    #         "click_count",
-    #         "mime_type",
-    #         "audience",
-    #         "searchgov_custom2",
-    #         "searchgov_custom3",
-    #         "searchgov_custom1",
-    #         "content_type",
-    #         "thumbnail_url"
-    #     ]
-    # }
 }
 
 # @es_fields = [
@@ -64,42 +64,52 @@ require 'json'
 @indices = {
     "production-i14y-documents-searchgov-v6-reindex_keyword" => [
         "title_en.raw",
-        "title_en.raw.keyword",
-        "content_en.raw",
-        "content_en.raw.keyword"
+        # "title_en.raw.keyword",
+        # "content_en.raw",
+        # "content_en.raw.keyword"
     ],
-    "human-logstash-*" => [
-        "params.query.raw"
-    ]
+    # "human-logstash-*" => [
+    #     "params.query.raw"
+    # ]
 }
 
 @es_url = "http://localhost:9200"
 
 regex_expressions = [
     '[0-9]+[a-z]+',
-    "[a-z]+[0-9]+",
-    "([a-z]+[0-9]*-[a-z]+[0-9]*)",
-    "([a-z]+[0-9]*-[0-9]+[a-z]*)",
-    "([0-9]+[a-z]*-[a-z]+[0-9]*)",
-    "([0-9]+[a-z]*-[0-9]+[a-z]*)",
-    "([a-z]+[0-9]*§[a-z]+[0-9]*)",
-    "([a-z]+[0-9]*§[0-9]+[a-z]*)",
-    "([0-9]+[a-z]*§[a-z]+[0-9]*)",
-    "([0-9]+[a-z]*§[0-9]+[a-z]*)",
-    "([a-z]+[0-9]*.[a-z]+[0-9]*)",
-    "([a-z]+[0-9]*.[0-9]+[a-z]*)",
-    "([0-9]+[a-z]*.[a-z]+[0-9]*)",
-    "([0-9]+[a-z]*.[0-9]+[a-z]*)"
+    # "[a-z]+[0-9]+",
+    # "([a-z]+[0-9]*-[a-z]+[0-9]*)",
+    # "([a-z]+[0-9]*-[0-9]+[a-z]*)",
+    # "([0-9]+[a-z]*-[a-z]+[0-9]*)",
+    # "([0-9]+[a-z]*-[0-9]+[a-z]*)",
+    # "([a-z]+[0-9]*§[a-z]+[0-9]*)",
+    # "([a-z]+[0-9]*§[0-9]+[a-z]*)",
+    # "([0-9]+[a-z]*§[a-z]+[0-9]*)",
+    # "([0-9]+[a-z]*§[0-9]+[a-z]*)",
+    # "([a-z]+[0-9]*.[a-z]+[0-9]*)",
+    # "([a-z]+[0-9]*.[0-9]+[a-z]*)",
+    # "([0-9]+[a-z]*.[a-z]+[0-9]*)",
+    # "([0-9]+[a-z]*.[0-9]+[a-z]*)"
 ]
 
 def query_elasticsearch(url, index, request)
     # puts JSON.pretty_generate(request)
-    return JSON.parse(HTTParty.get(
-        "#{url}/#{index}/_search",
+    return JSON.parse(HTTParty.post(
+        "#{url}/_search/scroll",
         :body => JSON.generate(request),
         :headers => {'Content-Type' => 'application/json'}
     ).to_s)
 end
+
+def create_scroll_elasticsearch(url, index, request)
+    # puts JSON.pretty_generate(request)
+    return JSON.parse(HTTParty.post(
+        "#{url}/#{index}/_search?scroll=10m",
+        :body => JSON.generate(request),
+        :headers => {'Content-Type' => 'application/json'}
+    ).to_s)
+end
+
 
 def push_to_elasticsearch(url, index, body)
     es_payload = []
@@ -134,15 +144,30 @@ end
 
 def crawl_es_index_with_field(es_url, index, field, regex)
     puts "*****************   REGEX PATTERN: #{regex} ******************"
+    results = create_scroll_elasticsearch(es_url, index, @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}))
+    scroll_id = results["_scroll_id"]
+    puts scroll_id
+
+    # exit 0
     num_docs = 0
     temp_doc_list = []
     loop do
-        results = query_elasticsearch(es_url, index,
-            @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}).merge(
-                {:from => num_docs})
-        )
+        # results = query_elasticsearch(es_url, index,
+        #     @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}).merge(
+        #         {:from => num_docs}).merge({
+        #             :pit => {
+        #                 :id => pit_id,
+        #                 :keep_alive => "60m"
+        #             }
+        #         })
+        # )
 
-        if results["hits"]["hits"].size == 0
+        # exit 0
+
+        puts JSON.pretty_generate(results)
+
+        # exit 0
+        if results["hits"]["hits"].size == 0 or num_docs == 20
             break
         end
         
@@ -156,6 +181,13 @@ def crawl_es_index_with_field(es_url, index, field, regex)
         end
         push_to_elasticsearch(es_url, index + "_regex", temp_doc_list)
         temp_doc_list = []
+
+        results = query_elasticsearch(es_url, index,
+            {
+                :scroll => "10m",
+                :scroll_id => scroll_id
+            }
+        )
     end
     # Write results back to ES
 end
