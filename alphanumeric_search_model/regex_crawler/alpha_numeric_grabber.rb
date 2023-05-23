@@ -185,7 +185,7 @@ def crawl_es_index_with_field(es_url, index, field, regex)
             temp_doc_list.push(index.include?("i14y") ? create_i14y_doc(document, regex, scan_field) : create_logstash_doc(document, regex, scan_field))
             # Write results back to ES
         end
-        push_to_elasticsearch(es_url, index + "_regex", temp_doc_list)
+        push_to_elasticsearch(es_url[es_node], index + "_regex", temp_doc_list)
         temp_doc_list = []
 
         results = query_elasticsearch(es_url.at(es_node), index,
