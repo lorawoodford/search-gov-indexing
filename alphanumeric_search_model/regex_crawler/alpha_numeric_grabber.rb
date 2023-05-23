@@ -208,7 +208,7 @@ end
         regex_expressions.each do |regex|
             begin
                 crawl_es_index_with_field(@es_url, index, field, regex)
-            rescue
+            rescue => exception
                 puts exception.backtrace
                 puts "There was an error"
                 sleep(120)
