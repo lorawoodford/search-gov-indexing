@@ -74,10 +74,10 @@ require 'json'
 }
 
 @es_url = [
-    "http://es17x1:9200",
-    "http://es17x2:9200",
-    "http://es17x3:9200",
-    "http://es17x4:9200",
+    "http://es717x1:9200",
+    "http://es717x2:9200",
+    "http://es717x3:9200",
+    "http://es717x4:9200",
 ]
 
 regex_expressions = [
@@ -149,7 +149,7 @@ end
 
 def crawl_es_index_with_field(es_url, index, field, regex)
     puts "*****************   REGEX PATTERN: #{regex} ******************"
-    results = create_scroll_elasticsearch(es_url, index, @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}))
+    results = create_scroll_elasticsearch(es_url[0], index, @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}))
     scroll_id = results["_scroll_id"]
     puts scroll_id
 
