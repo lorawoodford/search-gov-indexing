@@ -154,6 +154,7 @@ def crawl_es_index_with_field(es_url, index, field, regex)
     results = create_scroll_elasticsearch(es_url[@es_node], index, @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}))
     scroll_id = results["_scroll_id"]
     puts scroll_id
+    puts "Doc Count: " + results["hits"]["total"]["value"].to_s + " Relation: " + results["hits"]["total"]["relation"].to_s
 
     # exit 0
     num_docs = 0
@@ -176,8 +177,7 @@ def crawl_es_index_with_field(es_url, index, field, regex)
         # puts JSON.pretty_generate(results)
 
         # exit 0
-        puts "Doc Count: " + results["hits"]["total"].to_s + " Relation: " + results["hits"]["relation"]
-        if results["hits"]["hits"].size == 0 or num_docs == 20
+        if results["hits"]["hits"].size == 0
             break
         end
         
@@ -206,7 +206,11 @@ end
 @indices.keys.each do |index|
     @indices[index].each do |field|
         regex_expressions.each do |regex|
-            crawl_es_index_with_field(@es_url, index, field, regex)
+            begin
+                crawl_es_index_with_field(@es_url, index, field, regex)
+            rescue
+                puts "There was an error"
+            end
         end
     end
 end
