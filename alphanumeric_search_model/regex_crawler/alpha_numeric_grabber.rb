@@ -74,7 +74,7 @@ require 'json'
 }
 
 @es_url = [
-    "http://es717x1:9200",
+    # "http://es717x1:9200",
     "http://es717x2:9200",
     "http://es717x3:9200",
     "http://es717x4:9200",
