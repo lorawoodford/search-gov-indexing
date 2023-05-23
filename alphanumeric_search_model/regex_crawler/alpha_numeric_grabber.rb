@@ -80,6 +80,8 @@ require 'json'
     "http://es717x4:9200",
 ]
 
+@es_node = 0
+
 regex_expressions = [
     '[0-9]+[a-z]+',
     "[a-z]+[0-9]+",
@@ -149,15 +151,16 @@ end
 
 def crawl_es_index_with_field(es_url, index, field, regex)
     puts "*****************   REGEX PATTERN: #{regex} ******************"
-    results = create_scroll_elasticsearch(es_url[0], index, @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}))
+    results = create_scroll_elasticsearch(es_url[@es_node], index, @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}))
     scroll_id = results["_scroll_id"]
     puts scroll_id
 
     # exit 0
     num_docs = 0
-    es_node = 0
+    # es_node = 0
     temp_doc_list = []
     loop do
+        puts es_url.at(@es_node)
         # results = query_elasticsearch(es_url, index,
         #     @query.merge({:query => {:bool => {:filter => [{:regexp => {field => regex}}]}}}).merge(
         #         {:from => num_docs}).merge({
@@ -173,6 +176,7 @@ def crawl_es_index_with_field(es_url, index, field, regex)
         # puts JSON.pretty_generate(results)
 
         # exit 0
+        puts "Doc Count: " + results["hits"]["total"].to_s + " Relation: " + results["hits"]["relation"]
         if results["hits"]["hits"].size == 0 or num_docs == 20
             break
         end
@@ -185,16 +189,16 @@ def crawl_es_index_with_field(es_url, index, field, regex)
             temp_doc_list.push(index.include?("i14y") ? create_i14y_doc(document, regex, scan_field) : create_logstash_doc(document, regex, scan_field))
             # Write results back to ES
         end
-        push_to_elasticsearch(es_url[es_node], index + "_regex", temp_doc_list)
+        push_to_elasticsearch(es_url[@es_node], index + "_regex", temp_doc_list)
         temp_doc_list = []
 
-        results = query_elasticsearch(es_url.at(es_node), index,
+        results = query_elasticsearch(es_url.at(@es_node), index,
             {
                 :scroll => "10m",
                 :scroll_id => scroll_id
             }
         )
-        es_node = (es_node + 1) % es_url.size
+        @es_node = (@es_node + 1) % es_url.size
     end
     # Write results back to ES
 end
