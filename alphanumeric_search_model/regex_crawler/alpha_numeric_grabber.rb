@@ -209,7 +209,9 @@ end
             begin
                 crawl_es_index_with_field(@es_url, index, field, regex)
             rescue
+                puts exception.backtrace
                 puts "There was an error"
+                sleep(120)
             end
         end
     end
