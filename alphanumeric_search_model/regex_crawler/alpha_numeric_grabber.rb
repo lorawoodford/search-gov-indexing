@@ -73,7 +73,12 @@ require 'json'
     ]
 }
 
-@es_url = "http://es17x1:9200"
+@es_url = [
+    "http://es17x1:9200",
+    "http://es17x2:9200",
+    "http://es17x3:9200",
+    "http://es17x4:9200",
+]
 
 regex_expressions = [
     '[0-9]+[a-z]+',
@@ -150,6 +155,7 @@ def crawl_es_index_with_field(es_url, index, field, regex)
 
     # exit 0
     num_docs = 0
+    es_node = 0
     temp_doc_list = []
     loop do
         # results = query_elasticsearch(es_url, index,
@@ -182,12 +188,13 @@ def crawl_es_index_with_field(es_url, index, field, regex)
         push_to_elasticsearch(es_url, index + "_regex", temp_doc_list)
         temp_doc_list = []
 
-        results = query_elasticsearch(es_url, index,
+        results = query_elasticsearch(es_url.at(es_node), index,
             {
                 :scroll => "10m",
                 :scroll_id => scroll_id
             }
         )
+        es_node = (es_node + 1) % es_url.size
     end
     # Write results back to ES
 end
