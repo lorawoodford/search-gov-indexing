@@ -12,3 +12,4 @@ Uses currently indexed data in ElasticSearch to generate a model for improving a
 | -------- | ------|
 | Data Grabber |Loads data from a snapshot into ElasticSearch for analysis.|
 | RegEx Crawler |Using RegEx patterns will crawl ElasticSearch looking for alphanumeric Strings|
+| Levenshtein | Creates a Levenshtein distance calculation between words in i14y documents and search values |
