@@ -12,15 +12,88 @@
 # Sort each list by length? This will group together similar length
 # Do Levenshtein Compare between lists (currently an n^n operation, would there be a faster way?)
 
-def query_elasticsearch(body):
-    return 0
+import requests
+import json
+
+query1 = {
+    "aggs": {
+        "regex_count": {
+            "terms": {
+                "field": "REPLACE_THIS.keyword",
+                "size": 5
+            }
+        }
+    },
+    "size": 0
+}
+
+query2 = {
+    "aggs": {
+        "regex_patterns" : {
+            "terms": {
+                "field": "regex_patterns.keyword",
+                "size": 50
+            }
+        }
+    },
+    "query" : {
+        "term": {
+            "REPLACE_THIS.keyword": {
+                "value": "THIS_AS_WELL"
+            }
+        }
+    },
+    "size" : 0
+}
+
+i14y_list = []
+logstash_list = []
+
+es_url = "http://localhost:9200/"
+
+def query_elasticsearch(search_endpoint, body = ""):
+    r = requests.get(
+        es_url + search_endpoint, 
+        headers = {"Content-Type": "application/json"},
+        data=body
+        )
+    return r
 
 def get_levenshtein_distance(word_one, word_two):
     return 0
 
 def generate_list_from_i14y():
-    return 0
+    search_endpoint = "production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search"
+    r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "domain_name"))
+    response = json.loads(r.text)
+    print(response['aggregations']['regex_count']['buckets'])
+    # Iterate over keys:
+    for domain in response['aggregations']['regex_count']['buckets']:
+        print( domain['key'])
+        payload = json.dumps(query2).replace("THIS_AS_WELL", domain['key']).replace("REPLACE_THIS", "domain_name")
+        print(payload)
+        es_query_val = json.loads(query_elasticsearch(search_endpoint, payload).text)
+        for regex_pattern in es_query_val["aggregations"]["regex_patterns"]["buckets"]:
+            # print(regex_pattern["key"])
+            i14y_list.append(regex_pattern["key"])
 
 def generate_list_from_logstash_requests():
-    return 0
+    search_endpoint = "human-logstash-_regex/_search"
+    r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "affiliate"))
+    response = json.loads(r.text)
+    print(response)
+    for affiliate in response['aggregations']['regex_count']['buckets']:
+        print(affiliate["key"])
+        es_query_val = json.loads(query_elasticsearch(search_endpoint, json.dumps(query2).replace("REPLACE_THIS", "affiliate").replace("THIS_AS_WELL", affiliate['key'])).text)
+        for regex_pattern in es_query_val["aggregations"]["regex_patterns"]["buckets"]:
+            logstash_list.append(regex_pattern["key"])
 
+
+#query_elasticsearch("production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search", json.dumps(query1))
+# generate_list_from_i14y()
+# some_list = i14y_list.sort()
+# print(some_list)
+# print(len(set(i14y_list)))
+generate_list_from_logstash_requests()
+print(logstash_list)
+print(len(set(logstash_list)))
