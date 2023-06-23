@@ -1,2 +1,3 @@
 # Not sure about the format of this file, but will change later
 requests
+levenshtein
