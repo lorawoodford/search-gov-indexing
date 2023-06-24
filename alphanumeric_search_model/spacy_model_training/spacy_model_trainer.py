@@ -6,6 +6,7 @@
 
 import requests
 import json
+import spacy
 from spacy.lang.en import English
 from spacy.pipeline import EntityRuler
 
@@ -15,7 +16,7 @@ query1 = {
         "regex_count": {
             "terms": {
                 "field": "REPLACE_THIS.keyword",
-                "size": 20
+                "size": 5
             }
         }
     },
@@ -27,7 +28,7 @@ query2 = {
         "regex_patterns" : {
             "terms": {
                 "field": "regex_patterns.keyword",
-                "size": 500
+                "size": 5
             }
         }
     },
@@ -39,6 +40,17 @@ query2 = {
         }
     },
     "size" : 0
+}
+
+query3 = {
+    "query": {
+        "query_string": {
+            "query": "REPLACE_THIS",
+            "default_field": "content_en"
+        }
+    },
+    "_source": "content_en",
+    "size": 1
 }
 
 es_url = "http://localhost:9200/"
@@ -68,6 +80,15 @@ def generate_list_from_i14y():
             # print(regex_pattern["key"])
             i14y_list.append(regex_pattern["key"])
 
+def get_test_document_from_elasticsearch(query_string):
+    search_endpoint = "production-i14y-documents-searchgov-v6/_search"
+    r = query_elasticsearch(search_endpoint, json.dumps(query3).replace("REPLACE_THIS", query_string))
+    response = json.loads(r.text)
+    # print(response)
+    if r.status_code == 200:
+        return(response["hits"]["hits"][0]["_source"]["content_en"])
+    return None
+
 def generate_rules(patterns):
     nlp = English()
     # ruler = EntityRuler(nlp)
@@ -87,6 +108,39 @@ def create_training_data(data, data_type):
         )
     return (patterns)
 
+def test_model(model, text):
+    doc = nlp(text)
+    results = []
+    entities = []
+    print(doc.ents)
+    for ent in doc.ents:
+        entities.append((ent.start_char, ent.end_char, ent.label_))
+    print (entities)
+    if len(entities) > 0:
+        results = [text, {"entities": entities}]
+    return results
+
 generate_list_from_i14y()
-# print(i14y_list)
+print(i14y_list)
+print(len(i14y_list))
+i14y_list = list(set(i14y_list))
+test_docs = []
+for item in i14y_list[0]:
+    test_docs.append(get_test_document_from_elasticsearch(item))
+# print(get_test_document_from_elasticsearch(i14y_list[0]))
+# print(test_docs)
 generate_rules(create_training_data(i14y_list, "ALPHANUMERIC"))
+
+nlp = spacy.load("alpha_numeric")
+TRAINING_DATA = []
+
+for doc in test_docs:
+    if doc != None:
+        doc = doc.strip()
+        doc = doc.replace("\n", " ")
+    results = test_model(nlp, doc)
+    print(results)
+    if results != None:
+        TRAINING_DATA.append(results)
+
+print(TRAINING_DATA)
