@@ -20,7 +20,7 @@ query1 = {
         "regex_count": {
             "terms": {
                 "field": "REPLACE_THIS.keyword",
-                "size": 5
+                "size": 1000
             }
         }
     },
@@ -32,7 +32,7 @@ query2 = {
         "regex_patterns" : {
             "terms": {
                 "field": "regex_patterns.keyword",
-                "size": 20
+                "size": 5000
             }
         }
     },
@@ -84,8 +84,8 @@ def generate_list_from_i14y():
     search_endpoint = "production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search"
     r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "domain_name"))
     response = json.loads(r.text)
-    print(response)
-    print(response['aggregations']['regex_count']['buckets'])
+    # print(response)
+    # print(response['aggregations']['regex_count']['buckets'])
     # Iterate over keys:
     for domain in response['aggregations']['regex_count']['buckets']:
         print( domain['key'])
@@ -129,10 +129,10 @@ def test_model(model, text):
     doc = nlp(text)
     results = []
     entities = []
-    print(doc.ents)
+    # print(doc.ents)
     for ent in doc.ents:
         entities.append((ent.start_char, ent.end_char, ent.label_))
-    print (entities)
+    # print (entities)
     if len(entities) > 0:
         results = [text, {"entities": entities}]
     return results
@@ -172,6 +172,7 @@ def train_spacy(data, iterations):
                     losses = losses
                 )
             print(losses)
+    print(str(datetime.datetime.now()) + " Completed Training")
     return(nlp)
 
 generate_list_from_i14y()
@@ -212,5 +213,5 @@ TRAINING_DATA = [ele for ele in TRAINING_DATA if ele != []]
 # with open ("data/training_data.json", "w", encoding="utf-8") as f:
 #     json.dump(TRAINING_DATA, f, indent=4)
 
-nlp = train_spacy(TRAINING_DATA, 1)
+nlp = train_spacy(TRAINING_DATA, 30)
 nlp.to_disk("alpha_numeric_ner_model")
