@@ -40,11 +40,6 @@ query2 = {
         "bool": {
             "filter": [
                 {
-                    "regexp": {
-                        "regex_patterns.keyword": "[a-z]+[0-9]+"
-                    }
-                },
-                {
                     "term": {
                         "REPLACE_THIS.keyword": {
                             "value": "THIS_AS_WELL"
@@ -193,7 +188,7 @@ for item in i14y_list:
 print(len(test_docs))
 generate_rules(create_training_data(i14y_list, "ALPHANUMERIC"))
 
-# sys.exit(0)
+sys.exit(0)
 
 nlp = spacy.load("alpha_numeric")
 TRAINING_DATA = []
