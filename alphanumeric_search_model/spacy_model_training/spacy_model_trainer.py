@@ -172,28 +172,29 @@ def train_spacy(data, iterations):
 
 generate_list_from_i14y()
 i14y_list.sort()
-print(i14y_list)
+# print(i14y_list)
 print(len(i14y_list))
 i14y_list = list(set(i14y_list))
 i14y_list.sort()
 i14y_list = remove_english_words_from_list(i14y_list)
 print(len(i14y_list))
-print(i14y_list)
+# print(i14y_list)
 # sys.exit(0)
-test_docs = []
-for item in i14y_list:
-    print(item)
-    test_docs.append(get_test_document_from_elasticsearch(item))
-# print(get_test_document_from_elasticsearch(i14y_list[0]))
-print(len(test_docs))
+# test_docs = []
+# for item in i14y_list:
+#     print(item)
+#     test_docs.append(get_test_document_from_elasticsearch(item))
+# # print(get_test_document_from_elasticsearch(i14y_list[0]))
+# print(len(test_docs))
 generate_rules(create_training_data(i14y_list, "ALPHANUMERIC"))
 
-sys.exit(0)
+# sys.exit(0)
 
 nlp = spacy.load("alpha_numeric")
 TRAINING_DATA = []
 
-for doc in test_docs:
+for item in i14y_list:
+    doc = get_test_document_from_elasticsearch(item)
     if doc != None:
         doc = doc.strip()
         doc = doc.replace("\n", " ")
