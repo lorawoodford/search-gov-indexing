@@ -63,7 +63,7 @@ query3 = {
     "size": 1
 }
 
-es_url = "http://localhost:9200/"
+es_url = "http://es717x3:9200/"
 
 i14y_list = []
 
@@ -178,6 +178,9 @@ i14y_list = list(set(i14y_list))
 i14y_list.sort()
 i14y_list = remove_english_words_from_list(i14y_list)
 print(len(i14y_list))
+with open ("data/i14y_list.json", "w", encoding="utf-8") as f:
+    json.dump(i14y_list, f, indent=4)
+
 # print(i14y_list)
 # sys.exit(0)
 # test_docs = []
@@ -189,6 +192,8 @@ print(len(i14y_list))
 generate_rules(create_training_data(i14y_list, "ALPHANUMERIC"))
 
 # sys.exit(0)
+
+spacy.prefer_gpu()
 
 nlp = spacy.load("alpha_numeric")
 TRAINING_DATA = []
@@ -206,8 +211,8 @@ for item in i14y_list:
 TRAINING_DATA = [ele for ele in TRAINING_DATA if ele != []]
 # print(TRAINING_DATA)
 
-# with open ("data/training_data.json", "w", encoding="utf-8") as f:
-#     json.dump(TRAINING_DATA, f, indent=4)
+with open ("data/training_data.json", "w", encoding="utf-8") as f:
+    json.dump(TRAINING_DATA, f, indent=4)
 
-nlp = train_spacy(TRAINING_DATA, 30)
-nlp.to_disk("alpha_numeric_ner_model")
+# nlp = train_spacy(TRAINING_DATA, 30)
+# nlp.to_disk("alpha_numeric_ner_model")
