@@ -32,7 +32,7 @@ query2 = {
         "regex_patterns" : {
             "terms": {
                 "field": "regex_patterns.keyword",
-                "size": 5000
+                "size": 500
             }
         }
     },
@@ -170,19 +170,19 @@ def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Completed Training")
     return(nlp)
 
-# generate_list_from_i14y()
-# i14y_list.sort()
-# # print(i14y_list)
-# print(len(i14y_list))
-# i14y_list = list(set(i14y_list))
-# i14y_list.sort()
-# i14y_list = remove_english_words_from_list(i14y_list)
-# print(len(i14y_list))
-# with open ("data/i14y_list.json", "w", encoding="utf-8") as f:
-#     json.dump(i14y_list, f, indent=4)
+generate_list_from_i14y()
+i14y_list.sort()
+# print(i14y_list)
+print(len(i14y_list))
+i14y_list = list(set(i14y_list))
+i14y_list.sort()
+i14y_list = remove_english_words_from_list(i14y_list)
+print(len(i14y_list))
+with open ("data/i14y_list.json", "w", encoding="utf-8") as f:
+    json.dump(i14y_list, f, indent=4)
 
-with open("data/i14y_list.json", "r", encoding="utf-8") as f:
-    i14y_list = json.load(f)
+# with open("data/i14y_list.json", "r", encoding="utf-8") as f:
+#     i14y_list = json.load(f)
 
 # print(i14y_list)
 # sys.exit(0)
