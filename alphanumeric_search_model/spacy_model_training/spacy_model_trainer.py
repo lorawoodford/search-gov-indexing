@@ -196,7 +196,7 @@ def train_spacy(data, iterations):
 # generate_rules(create_training_data(i14y_list, "ALPHANUMERIC"))
 
 # sys.exit(0)
-
+print(str(datetime.datetime.now()) + " Starting Training")
 spacy.require_gpu()
 
 # nlp = spacy.load("alpha_numeric")
@@ -223,3 +223,5 @@ with open ("/mnt/trainingdata/ksummers/training_data.json", "r", encoding="utf-8
 
 nlp = train_spacy(TRAINING_DATA, 30)
 nlp.to_disk("/mnt/trainingdata/ksummers/alpha_numeric_ner_model")
+
+print(str(datetime.datetime.now()) + " Finished training")
