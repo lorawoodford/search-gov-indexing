@@ -219,7 +219,7 @@ spacy.require_gpu()
 #     json.dump(TRAINING_DATA, f, indent=4)
 
 with open ("/mnt/trainingdata/ksummers/training_data.json", "r", encoding="utf-8") as f:
-    training_data = json.load(f)
+    TRAINING_DATA = json.load(f)
 
 nlp = train_spacy(TRAINING_DATA, 30)
 nlp.to_disk("/mnt/trainingdata/ksummers/alpha_numeric_ner_model")
