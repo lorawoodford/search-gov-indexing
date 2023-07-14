@@ -92,7 +92,7 @@ class ExampleCreator(Thread):
         Thread.__init__(self)
     
     def run(self):
-        while(!training_creation_queue.empty())
+        while(not training_creation_queue.empty()):
             example = training_creation_queue.get()
             processed_queue.put(create_example(example[0], example[1]))
     
@@ -195,7 +195,7 @@ def train_spacy(data, iterations):
     with nlp.disable_pipes(*other_pipes):
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
-            for n in range(os.cpu_count() - 1) do:
+            for n in range(os.cpu_count() - 1):
                 t = ExampleCreator()
                 example_creator_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
@@ -207,10 +207,10 @@ def train_spacy(data, iterations):
             trainer.start()
             time.sleep(1)
             # Start Worker Threads
-            for t in example_creator_threads do:
+            for t in example_creator_threads:
                 t.start()
             time.sleep(1)
-            while(!processed_queue.empty() or trainer.is_alive()):
+            while(not processed_queue.empty() or trainer.is_alive()):
                 nlp.update(
                     processed_queue.get(),
                     drop = 0.2,
