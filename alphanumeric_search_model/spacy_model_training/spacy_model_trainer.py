@@ -141,16 +141,18 @@ def remove_english_words_from_list(list_of_words):
     return list_of_words
 
 def train_spacy(data, iterations):
-    print("Starting Training")
+    print(str(datetime.datetime.now()) + " Starting Training")
     TRAIN_DATA = data
     nlp = spacy.blank("en")
     print(nlp.pipe_names)
     if "ner" not in nlp.pipe_names:
         ner = nlp.create_pipe("ner")
         nlp.add_pipe("ner", last=True)
+    print(str(datetime.datetime.now()) + " Starting Entity processing")
     for _, annotations in TRAIN_DATA:
         for ent in annotations.get("entities"):
             ner.add_label(ent[2])
+    print(str(datetime.datetime.now()) + " Finished Entity processing")
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
         optimizer = nlp.begin_training()
@@ -165,7 +167,7 @@ def train_spacy(data, iterations):
                 print(annotations)
                 print(example)
                 print(str(datetime.datetime.now()) + "")
-                Sys.exit(0)
+                sys.exit(0)
                 nlp.update(
                     [example],
                     drop = 0.2,
