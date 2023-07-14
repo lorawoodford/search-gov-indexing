@@ -161,6 +161,11 @@ def train_spacy(data, iterations):
             losses = {}
             for text, annotations in TRAIN_DATA:
                 example = Example.from_dict(nlp.make_doc(text), annotations)
+                print(text)
+                print(annotations)
+                print(example)
+                print(str(datetime.datetime.now()) + "")
+                Sys.exit(0)
                 nlp.update(
                     [example],
                     drop = 0.2,
@@ -218,8 +223,10 @@ spacy.require_gpu()
 # with open ("/mnt/trainingdata/ksummers/training_data.json", "w", encoding="utf-8") as f:
 #     json.dump(TRAINING_DATA, f, indent=4)
 
+print(str(datetime.datetime.now()) + "Reading in Training Dataset")
 with open ("/mnt/trainingdata/ksummers/training_data.json", "r", encoding="utf-8") as f:
     TRAINING_DATA = json.load(f)
+print(str(datetime.datetime.now()) + "Finished reading Training Dataset")
 
 nlp = train_spacy(TRAINING_DATA, 30)
 nlp.to_disk("/mnt/trainingdata/ksummers/alpha_numeric_ner_model")
