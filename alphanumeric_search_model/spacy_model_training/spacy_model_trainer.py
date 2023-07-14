@@ -83,7 +83,7 @@ class TrainingDataProcessor(Thread):
     
     def run(self):
         for text, annotations in self.training_dataset:
-            training_creation_queue.push([text,annotations])
+            training_creation_queue.put([text,annotations])
 
 # End TrainingDataProcessor
 
