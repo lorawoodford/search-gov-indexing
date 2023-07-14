@@ -82,7 +82,7 @@ class TrainingDataProcessor(Thread):
         self.training_dataset = training_dataset
     
     def run(self):
-        for text, annotations in training_dataset:
+        for text, annotations in self.training_dataset:
             training_creation_queue.push([text,annotations])
 
 # End TrainingDataProcessor
@@ -191,9 +191,9 @@ def train_spacy(data, iterations):
         for ent in annotations.get("entities"):
             ner.add_label(ent[2])
     print(str(datetime.datetime.now()) + " Finished Entity processing")
-    example_creator_threads = []
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
+        example_creator_threads = []
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
             for n in range(os.cpu_count() - 1):
