@@ -9,11 +9,16 @@ import json
 import spacy
 import sys
 import datetime
+import time
 import random
 from spacy.lang.en import English
 from spacy.pipeline import EntityRuler
 from spacy.training.example import Example
 
+import threading
+import queue
+
+import ray
 
 query1 = {
     "aggs": {
@@ -66,6 +71,38 @@ query3 = {
 es_url = "http://es717x3:9200/"
 
 i14y_list = []
+
+training_creation_queue = queue.Queue(maxsize=10000)
+processed_queue = queue.Queue(maxsize=10000)
+
+class TrainingDataProcessor(Thread):
+    def __init__(self, training_dataset):
+        Thread.__init__(self)
+        self.training_dataset = training_dataset
+    
+    def run(self):
+        for text, annotations in training_dataset:
+            training_creation_queue.push([text,annotations])
+
+# End TrainingDataProcessor
+
+
+class ExampleCreator(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+    
+    def run(self):
+        while(!training_creation_queue.empty())
+            example = training_creation_queue.get()
+            processed_queue.put(create_example(example[0], example[1]))
+    
+    @ray.remote
+    def create_example(text, annotations):
+        return [Example.from_dict(nlp.make_doc(text), annotations)]
+
+# End ExampleCreator
+
+
 
 def query_elasticsearch(search_endpoint, body = ""):
     r = requests.get(
@@ -153,25 +190,46 @@ def train_spacy(data, iterations):
         for ent in annotations.get("entities"):
             ner.add_label(ent[2])
     print(str(datetime.datetime.now()) + " Finished Entity processing")
+    example_creator_threads = []
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
+            for n in range(os.cpu_count() - 1) do:
+                t = ExampleCreator()
+                example_creator_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
             random.shuffle(TRAIN_DATA)
             print(str(datetime.datetime.now()) + " Finished shuffling data")
             losses = {}
-            for text, annotations in TRAIN_DATA:
-                example = Example.from_dict(nlp.make_doc(text), annotations)
-                print(str(datetime.datetime.now()) + " Example")
+            # Create Worker Threads
+            trainer = TrainingDataProcessor(TRAIN_DATA)
+            trainer.start()
+            time.sleep(1)
+            # Start Worker Threads
+            for t in example_creator_threads do:
+                t.start()
+            time.sleep(1)
+            while(!processed_queue.empty() or trainer.is_alive()):
                 nlp.update(
-                    [example],
+                    processed_queue.get(),
                     drop = 0.2,
-                    sgd=optimizer,
+                    sgd = optimizer,
                     losses = losses
                 )
-                print(str(datetime.datetime.now()) + " NLP")
+            # for text, annotations in TRAIN_DATA:
+            #     example = Example.from_dict(nlp.make_doc(text), annotations) # This needs to be parallelized, not just multithreaded
+            #     print(str(datetime.datetime.now()) + " Example")
+            #     nlp.update(
+            #         [example], # Processed_queue.get()
+            #         drop = 0.2,
+            #         sgd=optimizer,
+            #         losses = losses
+            #     )
+            #     print(str(datetime.datetime.now()) + " NLP")
+
                 # sys.exit(0)
+            # Make sure all worker threads are finished
             print(losses)
     print(str(datetime.datetime.now()) + " Completed Training")
     return(nlp)
