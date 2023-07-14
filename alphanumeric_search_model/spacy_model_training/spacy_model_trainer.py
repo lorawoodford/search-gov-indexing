@@ -163,15 +163,15 @@ def train_spacy(data, iterations):
             losses = {}
             for text, annotations in TRAIN_DATA:
                 example = Example.from_dict(nlp.make_doc(text), annotations)
-                print(str(datetime.datetime.now()) + "")
+                print(str(datetime.datetime.now()) + " Example")
                 nlp.update(
                     [example],
                     drop = 0.2,
                     sgd=optimizer,
                     losses = losses
                 )
-                print(str(datetime.datetime.now()) + "")
-                sys.exit(0)
+                print(str(datetime.datetime.now()) + " NLP")
+                # sys.exit(0)
             print(losses)
     print(str(datetime.datetime.now()) + " Completed Training")
     return(nlp)
