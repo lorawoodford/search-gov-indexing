@@ -11,6 +11,7 @@ import sys
 import datetime
 import time
 import random
+import os
 from spacy.lang.en import English
 from spacy.pipeline import EntityRuler
 from spacy.training.example import Example
@@ -94,7 +95,7 @@ class ExampleCreator(Thread):
     def run(self):
         while(not training_creation_queue.empty()):
             example = training_creation_queue.get()
-            processed_queue.put(create_example(example[0], example[1]))
+            processed_queue.put(create_example.remote(example[0], example[1]))
     
     @ray.remote
     def create_example(text, annotations):
@@ -281,10 +282,10 @@ spacy.require_gpu()
 # with open ("/mnt/trainingdata/ksummers/training_data.json", "w", encoding="utf-8") as f:
 #     json.dump(TRAINING_DATA, f, indent=4)
 
-print(str(datetime.datetime.now()) + "Reading in Training Dataset")
+print(str(datetime.datetime.now()) + " Reading in Training Dataset")
 with open ("/mnt/trainingdata/ksummers/training_data.json", "r", encoding="utf-8") as f:
     TRAINING_DATA = json.load(f)
-print(str(datetime.datetime.now()) + "Finished reading Training Dataset")
+print(str(datetime.datetime.now()) + " Finished reading Training Dataset")
 
 nlp = train_spacy(TRAINING_DATA, 30)
 nlp.to_disk("/mnt/trainingdata/ksummers/alpha_numeric_ner_model")
