@@ -15,7 +15,7 @@ from spacy.lang.en import English
 from spacy.pipeline import EntityRuler
 from spacy.training.example import Example
 
-import threading
+import threading import Thread
 import queue
 
 import ray
