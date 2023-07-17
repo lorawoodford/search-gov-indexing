@@ -73,9 +73,9 @@ es_url = "http://es717x3:9200/"
 
 i14y_list = []
 
-training_creation_queue = queue.Queue(maxsize=10000)
-ray_object_id_queue = queue.Queue(maxsize=10000)
-processed_queue = queue.Queue(maxsize=10000)
+training_creation_queue = queue.Queue(maxsize=100000)
+ray_object_id_queue = queue.Queue(maxsize=100000)
+processed_queue = queue.Queue(maxsize=100000)
 
 class TrainingDataProcessor(Thread):
     def __init__(self, training_dataset):
@@ -95,7 +95,7 @@ class ExampleCreator(Thread):
         self.nlp = nlp
     
     def run(self):
-        while(not training_creation_queue.empty()):
+        while(True):
             example = training_creation_queue.get()
             ray_object_id_queue.put(self.create_example.remote(example[0], example[1]))
     
@@ -110,7 +110,7 @@ class ExamplePusher(Thread):
         Thread.__init__(self)
     
     def run(self):
-        while(not ray_object_id_queue.empty()):
+        while(True):
             processed_queue.push(ray.get(ray_object_id_queue.get()))
 
 # End ExamplePusher
@@ -188,6 +188,22 @@ def remove_english_words_from_list(list_of_words):
             list_of_words.remove(word)
     return list_of_words
 
+def create_ray_threads(nlp):
+    print(str(datetime.datetime.now()) + " Creating Ray Threads")
+    thread_array = []
+    example_creator = ExampleCreator(nlp)
+    example_creator.daemon = True
+    example_creator.start()
+    thread_array.append(example_creator)
+    for n in range((os.cpu_count() - 2)):
+        print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + n)
+        t = ExamplePusher()
+        t.daemon = True
+        t.start()
+        thread_array.append(t)
+    print(str(datetime.datetime.now()) + " Finished creating Ray Threads")
+    return(thread_array)
+
 def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Starting Training")
     TRAIN_DATA = data
@@ -205,11 +221,8 @@ def train_spacy(data, iterations):
     with nlp.disable_pipes(*other_pipes):
         example_pusher_threads = []
         optimizer = nlp.begin_training()
-        example_creator = ExampleCreator(nlp)
+        thread_array = create_ray_threads(nlp)
         for iteration in range(iterations):
-            for n in range((os.cpu_count() - 2)):
-                t = ExamplePusher()
-                example_pusher_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
             random.shuffle(TRAIN_DATA)
             print(str(datetime.datetime.now()) + " Finished shuffling data")
@@ -218,13 +231,6 @@ def train_spacy(data, iterations):
             trainer = TrainingDataProcessor(TRAIN_DATA)
             print(str(datetime.datetime.now()) + " Starting Training Data Processor")
             trainer.start()
-            time.sleep(1)
-            # Start Worker Threads
-            example_creator.start()
-            time.sleep(1)
-            print(str(datetime.datetime.now()) + " Starting Ray Getter Threads")
-            for t in example_pusher_threads:
-                t.start()
             time.sleep(10)
             print(str(datetime.datetime.now()) + " Starting Training")
             while(not processed_queue.empty() or trainer.is_alive()):
@@ -248,6 +254,7 @@ def train_spacy(data, iterations):
                 # sys.exit(0)
             # Make sure all worker threads are finished
             print(losses)
+        # Clean up threads
     print(str(datetime.datetime.now()) + " Completed Training")
     return(nlp)
 
