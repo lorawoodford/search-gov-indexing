@@ -196,7 +196,7 @@ def create_ray_threads(nlp):
     example_creator.start()
     thread_array.append(example_creator)
     for n in range((os.cpu_count() - 2)):
-        print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + n)
+        print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + str(n))
         t = ExamplePusher()
         t.daemon = True
         t.start()
