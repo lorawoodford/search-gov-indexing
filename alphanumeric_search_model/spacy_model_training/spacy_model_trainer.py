@@ -74,6 +74,7 @@ es_url = "http://es717x3:9200/"
 i14y_list = []
 
 training_creation_queue = queue.Queue(maxsize=10000)
+ray_object_id_queue = queue.Queue(maxsize=10000)
 processed_queue = queue.Queue(maxsize=10000)
 
 class TrainingDataProcessor(Thread):
@@ -96,7 +97,7 @@ class ExampleCreator(Thread):
     def run(self):
         while(not training_creation_queue.empty()):
             example = training_creation_queue.get()
-            processed_queue.put(ray.get(self.create_example.remote(example[0], example[1])))
+            ray_object_id_queue.put(self.create_example.remote(example[0], example[1]))
     
     @ray.remote
     def create_example(text, annotations):
@@ -104,7 +105,15 @@ class ExampleCreator(Thread):
 
 # End ExampleCreator
 
+class ExamplePusher(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+    
+    def run(self):
+        while(not ray_object_id_queue.empty()):
+            processed_queue.push(ray.get(ray_object_id_queue.get()))
 
+# End ExamplePusher
 
 def query_elasticsearch(search_endpoint, body = ""):
     r = requests.get(
@@ -194,12 +203,13 @@ def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Finished Entity processing")
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
-        example_creator_threads = []
+        example_pusher_threads = []
         optimizer = nlp.begin_training()
+        example_creator = ExampleCreator(nlp)
         for iteration in range(iterations):
             for n in range(2): #(os.cpu_count() - 2)):
-                t = ExampleCreator(nlp)
-                example_creator_threads.append(t)
+                t = ExamplePusher()
+                example_pusher_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
             random.shuffle(TRAIN_DATA)
             print(str(datetime.datetime.now()) + " Finished shuffling data")
@@ -210,8 +220,10 @@ def train_spacy(data, iterations):
             trainer.start()
             time.sleep(1)
             # Start Worker Threads
-            print(str(datetime.datetime.now()) + " Starting Ray Worker Threads")
-            for t in example_creator_threads:
+            example_creator.start()
+            time.sleep
+            print(str(datetime.datetime.now()) + " Starting Ray Getter Threads")
+            for t in example_pusher_threads:
                 t.start()
             time.sleep(1)
             while(not processed_queue.empty() or trainer.is_alive()):
