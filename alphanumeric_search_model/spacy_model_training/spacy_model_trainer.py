@@ -95,10 +95,10 @@ class ExampleCreator(Thread):
         self.nlp = nlp
     
     def run(self):
-        nlp_ref = ray.put(self.nlp)
+        # nlp_ref = ray.put(self.nlp)
         while(True):
             example = training_creation_queue.get()
-            ray_object_id_queue.put(self.create_example.remote(example[0], example[1], nlp_ref))
+            ray_object_id_queue.put(self.create_example.remote(example[0], example[1], self.nlp))
     
     @ray.remote
     def create_example(self, text, annotations, nlp):
@@ -194,12 +194,14 @@ def create_ray_threads(nlp):
     thread_array = []
     example_creator = ExampleCreator(nlp)
     example_creator.daemon = True
+    example_creator.name = "Example_Creator"
     example_creator.start()
     thread_array.append(example_creator)
     for n in range(2): #(os.cpu_count() - 2)):
         print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + str(n))
         t = ExamplePusher()
         t.daemon = True
+        t.name = "Example_Pusher_" + str(n)
         t.start()
         thread_array.append(t)
     print(str(datetime.datetime.now()) + " Finished creating Ray Threads")
