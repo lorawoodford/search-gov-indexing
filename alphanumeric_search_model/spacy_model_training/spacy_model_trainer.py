@@ -89,8 +89,9 @@ class TrainingDataProcessor(Thread):
 
 
 class ExampleCreator(Thread):
-    def __init__(self):
+    def __init__(self, nlp):
         Thread.__init__(self)
+        self.nlp = nlp
     
     def run(self):
         while(not training_creation_queue.empty()):
@@ -99,7 +100,7 @@ class ExampleCreator(Thread):
     
     @ray.remote
     def create_example(text, annotations):
-        return [Example.from_dict(nlp.make_doc(text), annotations)]
+        return [Example.from_dict(self.nlp.make_doc(text), annotations)]
 
 # End ExampleCreator
 
@@ -196,7 +197,7 @@ def train_spacy(data, iterations):
         example_creator_threads = []
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
-            for n in range(1):
+            for n in range((os.cpu_count() - 2)):
                 t = ExampleCreator()
                 example_creator_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
@@ -205,9 +206,11 @@ def train_spacy(data, iterations):
             losses = {}
             # Create Worker Threads
             trainer = TrainingDataProcessor(TRAIN_DATA)
+            print(str(datetime.datetime.now()) + " Starting Training Data Processor")
             trainer.start()
             time.sleep(1)
             # Start Worker Threads
+            print(str(datetime.datetime.now()) + " Starting Ray Worker Threads")
             for t in example_creator_threads:
                 t.start()
             time.sleep(1)
