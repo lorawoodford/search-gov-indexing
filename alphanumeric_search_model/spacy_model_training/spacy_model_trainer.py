@@ -198,7 +198,7 @@ def train_spacy(data, iterations):
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
             for n in range((os.cpu_count() - 2)):
-                t = ExampleCreator()
+                t = ExampleCreator(nlp)
                 example_creator_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
             random.shuffle(TRAIN_DATA)
