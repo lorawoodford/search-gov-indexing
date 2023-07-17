@@ -196,7 +196,7 @@ def train_spacy(data, iterations):
         example_creator_threads = []
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
-            for n in range(os.cpu_count() - 1):
+            for n in range(1):
                 t = ExampleCreator()
                 example_creator_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
