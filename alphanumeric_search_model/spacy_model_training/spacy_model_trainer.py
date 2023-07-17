@@ -207,7 +207,7 @@ def train_spacy(data, iterations):
         optimizer = nlp.begin_training()
         example_creator = ExampleCreator(nlp)
         for iteration in range(iterations):
-            for n in range(2): #(os.cpu_count() - 2)):
+            for n in range((os.cpu_count() - 2)):
                 t = ExamplePusher()
                 example_pusher_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
@@ -221,11 +221,12 @@ def train_spacy(data, iterations):
             time.sleep(1)
             # Start Worker Threads
             example_creator.start()
-            time.sleep
+            time.sleep(1)
             print(str(datetime.datetime.now()) + " Starting Ray Getter Threads")
             for t in example_pusher_threads:
                 t.start()
-            time.sleep(1)
+            time.sleep(10)
+            print(str(datetime.datetime.now()) + " Starting Training")
             while(not processed_queue.empty() or trainer.is_alive()):
                 nlp.update(
                     processed_queue.get(),
