@@ -95,7 +95,7 @@ class ExampleCreator(Thread):
     def run(self):
         while(not training_creation_queue.empty()):
             example = training_creation_queue.get()
-            processed_queue.put(ray.get(create_example.remote(example[0], example[1])))
+            processed_queue.put(ray.get(self.create_example.remote(example[0], example[1])))
     
     @ray.remote
     def create_example(text, annotations):
