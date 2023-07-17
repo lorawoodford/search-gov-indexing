@@ -197,7 +197,7 @@ def train_spacy(data, iterations):
         example_creator_threads = []
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
-            for n in range((os.cpu_count() - 2)):
+            for n in range(2): #(os.cpu_count() - 2)):
                 t = ExampleCreator(nlp)
                 example_creator_threads.append(t)
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
@@ -265,6 +265,7 @@ def train_spacy(data, iterations):
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
 spacy.require_gpu()
+ray.init
 
 # nlp = spacy.load("alpha_numeric")
 # TRAINING_DATA = []
