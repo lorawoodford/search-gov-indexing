@@ -101,7 +101,7 @@ class ExampleCreator(Thread):
             ray_object_id_queue.put(self.create_example.remote(example[0], example[1], self.nlp))
     
     @ray.remote
-    def create_example(self, text, annotations, nlp):
+    def create_example(text, annotations, nlp):
         return [Example.from_dict(nlp.make_doc(text), annotations)]
 
 # End ExampleCreator
