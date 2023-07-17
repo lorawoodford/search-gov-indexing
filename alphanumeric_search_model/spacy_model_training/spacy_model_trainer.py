@@ -95,13 +95,14 @@ class ExampleCreator(Thread):
         self.nlp = nlp
     
     def run(self):
+        nlp_ref = ray.put(nlp_ref)
         while(True):
             example = training_creation_queue.get()
-            ray_object_id_queue.put(self.create_example.remote(example[0], example[1]))
+            ray_object_id_queue.put(self.create_example.remote(example[0], example[1], nlp_ref))
     
     @ray.remote
-    def create_example(text, annotations):
-        return [Example.from_dict(self.nlp.make_doc(text), annotations)]
+    def create_example(self, text, annotations, nlp):
+        return [Example.from_dict(nlp.make_doc(text), annotations)]
 
 # End ExampleCreator
 
