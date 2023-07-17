@@ -111,7 +111,7 @@ class ExamplePusher(Thread):
     
     def run(self):
         while(True):
-            processed_queue.push(ray.get(ray_object_id_queue.get()))
+            processed_queue.put(ray.get(ray_object_id_queue.get()))
 
 # End ExamplePusher
 
