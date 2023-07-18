@@ -74,7 +74,7 @@ es_url = "http://es717x3:9200/"
 i14y_list = []
 
 training_creation_queue = queue.Queue(maxsize=100000)
-ray_object_id_queue = queue.Queue(maxsize=100000)
+ray_object_id_queue = queue.Queue(maxsize=4500)
 processed_queue = queue.Queue(maxsize=100000)
 
 class TrainingDataProcessor(Thread):
@@ -208,9 +208,18 @@ def remove_english_words_from_list(list_of_words):
             list_of_words.remove(word)
     return list_of_words
 
-def create_ray_threads(nlp):
+def create_ray_threads(data):
     print(str(datetime.datetime.now()) + " Creating Ray Threads")
+    nlp = spacy.blank("en")
+    nlp.require_cpu
     thread_array = []
+    if "ner" not in nlp.pipe_names:
+        ner = nlp.create_pipe("ner")
+        nlp.add_pipe("ner", last=True)
+    print(str(datetime.datetime.now()) + " Starting Ray Entity processing")
+    for _, annotations in TRAIN_DATA:
+        for ent in annotations.get("entities"):
+            ner.add_label(ent[2])
     nlp_ref = ray.put(nlp)
     example_creator = ExampleCreator(nlp_ref)
     example_creator.daemon = True
@@ -230,7 +239,9 @@ def create_ray_threads(nlp):
 def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Starting Training")
     TRAIN_DATA = data
+    thread_array = create_ray_threads(data)
     nlp = spacy.blank("en")
+    nlp.require_gpu
     print(nlp.pipe_names)
     if "ner" not in nlp.pipe_names:
         ner = nlp.create_pipe("ner")
@@ -244,7 +255,6 @@ def train_spacy(data, iterations):
     with nlp.disable_pipes(*other_pipes):
         example_pusher_threads = []
         optimizer = nlp.begin_training()
-        thread_array = create_ray_threads(nlp)
         for iteration in range(iterations):
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
             random.shuffle(TRAIN_DATA)
@@ -306,7 +316,7 @@ def train_spacy(data, iterations):
 
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
-spacy.require_cpu()
+# spacy.require_cpu()
 ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
