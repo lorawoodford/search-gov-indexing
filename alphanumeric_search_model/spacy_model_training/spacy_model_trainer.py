@@ -83,6 +83,7 @@ class TrainingDataProcessor(Thread):
         self.training_dataset = training_dataset
     
     def run(self):
+        print(str(datetime.datetime.now()) + " Starting Training Data Processor")
         for text, annotations in self.training_dataset:
             training_creation_queue.put([text,annotations])
 
@@ -96,6 +97,7 @@ class ExampleCreator(Thread):
     
     def run(self):
         # nlp_ref = ray.put(self.nlp)
+        print(str(datetime.datetime.now()) + " Starting Example Creator")
         remote_container = ray.remote(ExampleContainer)
         actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp))
         while(True):
@@ -127,6 +129,7 @@ class ExamplePusher(Thread):
         Thread.__init__(self)
     
     def run(self):
+        print(str(datetime.datetime.now()) + " Starting Example Pusher")
         while(True):
             processed_queue.put(ray.get(ray_object_id_queue.get()))
 
@@ -249,10 +252,9 @@ def train_spacy(data, iterations):
             losses = {}
             # Create Worker Threads
             trainer = TrainingDataProcessor(TRAIN_DATA)
-            print(str(datetime.datetime.now()) + " Starting Training Data Processor")
             trainer.start()
             time.sleep(10)
-            print(str(datetime.datetime.now()) + " Starting Training")
+            print(str(datetime.datetime.now()) + " Starting Actual Training")
             while(not processed_queue.empty() or trainer.is_alive()):
                 nlp.update(
                     processed_queue.get(),
@@ -305,7 +307,7 @@ def train_spacy(data, iterations):
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
 spacy.require_gpu()
-ray.init
+ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
 # TRAINING_DATA = []
