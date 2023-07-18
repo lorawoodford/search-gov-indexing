@@ -211,6 +211,7 @@ def remove_english_words_from_list(list_of_words):
 def create_ray_threads(nlp):
     print(str(datetime.datetime.now()) + " Creating Ray Threads")    
     nlp_ref = ray.put(nlp)
+    thread_array = []
     example_creator = ExampleCreator(nlp_ref)
     example_creator.daemon = True
     example_creator.name = "Example_Creator"
