@@ -101,9 +101,9 @@ class ExampleCreator(Thread):
         while(True):
             example = training_creation_queue.get()
             # ray_obj = create_example.remote(example[0], example[1], self.nlp)
-            print(example)
+            # print(example)
             ray_obj = actor_handle.create_example.remote(example)
-            print(ray_obj)
+            # print(ray_obj)
             ray_object_id_queue.put(ray_obj)
     
     # @ray.remote
