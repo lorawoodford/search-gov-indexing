@@ -112,7 +112,7 @@ class ExampleCreator(Thread):
 
 # End ExampleCreator
 
-@ray.remote(num_cpus=14)
+@ray.remote
 class ExampleContainer:
     def __init__(self, nlp):
         self.nlp = nlp
