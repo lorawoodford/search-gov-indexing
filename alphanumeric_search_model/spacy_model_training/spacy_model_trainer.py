@@ -131,7 +131,11 @@ class ExamplePusher(Thread):
     def run(self):
         print(str(datetime.datetime.now()) + " Starting Example Pusher")
         while(True):
-            processed_queue.put(ray.get(ray_object_id_queue.get()))
+            try:
+                processed_queue.put(ray.get(ray_object_id_queue.get()))
+            except Exception:
+                print(str(datetime.datetime.now()) + " Example Pusher Exception, restarting")
+
 
 # End ExamplePusher
 
@@ -212,12 +216,13 @@ def create_ray_threads(nlp):
     print(str(datetime.datetime.now()) + " Creating Ray Threads")    
     nlp_ref = ray.put(nlp)
     thread_array = []
-    example_creator = ExampleCreator(nlp_ref)
-    example_creator.daemon = True
-    example_creator.name = "Example_Creator"
-    example_creator.start()
-    thread_array.append(example_creator)
-    for n in range(2): #(os.cpu_count() - 2)):
+    for n in range(3):
+        example_creator = ExampleCreator(nlp_ref)
+        example_creator.daemon = True
+        example_creator.name = "Example_Creator"
+        example_creator.start()
+        thread_array.append(example_creator)
+    for n in range((os.cpu_count() - 4)):
         print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + str(n))
         t = ExamplePusher()
         t.daemon = True
