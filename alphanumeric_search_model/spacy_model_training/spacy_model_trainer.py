@@ -96,11 +96,13 @@ class ExampleCreator(Thread):
     
     def run(self):
         # nlp_ref = ray.put(self.nlp)
-        actor_handle = ExampleContainer.remote(self.nlp)
+        remote_container = ray.remote(ExampleContainer)
+        actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp)
         while(True):
-            # example = training_creation_queue.get()
+            example = training_creation_queue.get()
             # ray_obj = create_example.remote(example[0], example[1], self.nlp)
-            ray_obj = actor_handle.create_example.remote(training_creation_queue.get())
+            print(example)
+            ray_obj = actor_handle.create_example.remote(example)
             print(ray_obj)
             ray_object_id_queue.put(ray_obj)
     
@@ -110,7 +112,7 @@ class ExampleCreator(Thread):
 
 # End ExampleCreator
 
-@ray.remote()
+@ray.remote(num_cpus=14)
 class ExampleContainer:
     def __init__(self, nlp):
         self.nlp = nlp
