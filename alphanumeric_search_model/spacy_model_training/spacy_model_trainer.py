@@ -306,7 +306,7 @@ def train_spacy(data, iterations):
 
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
-spacy.prefer_gpu()
+spacy.require_cpu()
 ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
