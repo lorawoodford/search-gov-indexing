@@ -208,18 +208,8 @@ def remove_english_words_from_list(list_of_words):
             list_of_words.remove(word)
     return list_of_words
 
-def create_ray_threads(data):
-    print(str(datetime.datetime.now()) + " Creating Ray Threads")
-    nlp = spacy.blank("en")
-    nlp.require_cpu
-    thread_array = []
-    if "ner" not in nlp.pipe_names:
-        ner = nlp.create_pipe("ner")
-        nlp.add_pipe("ner", last=True)
-    print(str(datetime.datetime.now()) + " Starting Ray Entity processing")
-    for _, annotations in TRAIN_DATA:
-        for ent in annotations.get("entities"):
-            ner.add_label(ent[2])
+def create_ray_threads(nlp):
+    print(str(datetime.datetime.now()) + " Creating Ray Threads")    
     nlp_ref = ray.put(nlp)
     example_creator = ExampleCreator(nlp_ref)
     example_creator.daemon = True
@@ -239,9 +229,7 @@ def create_ray_threads(data):
 def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Starting Training")
     TRAIN_DATA = data
-    thread_array = create_ray_threads(data)
     nlp = spacy.blank("en")
-    nlp.require_gpu
     print(nlp.pipe_names)
     if "ner" not in nlp.pipe_names:
         ner = nlp.create_pipe("ner")
@@ -254,6 +242,7 @@ def train_spacy(data, iterations):
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
         example_pusher_threads = []
+        thread_array = create_ray_threads(nlp)
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
@@ -316,7 +305,9 @@ def train_spacy(data, iterations):
 
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
-# spacy.require_cpu()
+gpu = spacy.require_gpu()
+print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
+print(spacy.info)
 ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
