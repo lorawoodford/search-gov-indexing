@@ -120,7 +120,7 @@ class ExampleContainer:
         self.nlp = nlp
 
     def create_example(self, example_array):
-        return [Example.from_dict(self.nlp.make_doc(example_array[0]), example[1])]
+        return [Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])]
 
 # End ExampleContainer
 
