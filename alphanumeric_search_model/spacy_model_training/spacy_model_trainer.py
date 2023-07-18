@@ -96,8 +96,8 @@ class ExampleCreator(Thread):
     
     def run(self):
         # nlp_ref = ray.put(self.nlp)
-        remote_container = ray.remote(ExampleContainer)
-        actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp)
+        # remote_container = ray.remote(ExampleContainer)
+        actor_handle = ray.remote(ExampleContainer.remote(self.nlp))
         while(True):
             example = training_creation_queue.get()
             # ray_obj = create_example.remote(example[0], example[1], self.nlp)
@@ -106,9 +106,9 @@ class ExampleCreator(Thread):
             print(ray_obj)
             ray_object_id_queue.put(ray_obj)
     
-    @ray.remote
-    def create_example(text, annotations, nlp):
-        return [Example.from_dict(nlp.make_doc(text), annotations)]
+    # @ray.remote
+    # def create_example(text, annotations, nlp):
+    #     return [Example.from_dict(nlp.make_doc(text), annotations)]
 
 # End ExampleCreator
 
@@ -208,7 +208,8 @@ def remove_english_words_from_list(list_of_words):
 def create_ray_threads(nlp):
     print(str(datetime.datetime.now()) + " Creating Ray Threads")
     thread_array = []
-    example_creator = ExampleCreator(nlp)
+    nlp_ref = ray.put(nlp)
+    example_creator = ExampleCreator(nlp_ref)
     example_creator.daemon = True
     example_creator.name = "Example_Creator"
     example_creator.start()
@@ -331,6 +332,7 @@ with open ("/mnt/trainingdata/ksummers/training_data.json", "r", encoding="utf-8
 print(str(datetime.datetime.now()) + " Finished reading Training Dataset")
 
 nlp = train_spacy(TRAINING_DATA, 30)
+print(str(datetime.datetime.now()) + " Writing spaCy model to disk")
 nlp.to_disk("/mnt/trainingdata/ksummers/alpha_numeric_ner_model")
 
 print(str(datetime.datetime.now()) + " Finished training")
