@@ -260,6 +260,8 @@ def train_spacy(data, iterations):
             trainer.start()
             time.sleep(10)
             print(str(datetime.datetime.now()) + " Starting Actual Training")
+            num_trainings_processed = 0
+            print(str(datetime.datetime.now()) + " Processed Queue Size: " + processed_queue.qsize())
             while(not processed_queue.empty() or trainer.is_alive()):
                 nlp.update(
                     processed_queue.get(),
@@ -267,6 +269,11 @@ def train_spacy(data, iterations):
                     sgd = optimizer,
                     losses = losses
                 )
+                num_trainings_processed = num_trainings_processed + 1
+                if(num_trainings_processed == 1000):
+                    print(str(datetime.datetime.now()) + " 1000 trainings processed")
+                    print(str(datetime.datetime.now()) + " Processed Queue Size: " + processed_queue.qsize())
+                    num_trainings_processed = 0
             # for text, annotations in TRAIN_DATA:
             #     example = Example.from_dict(nlp.make_doc(text), annotations) # This needs to be parallelized, not just multithreaded
             #     print(str(datetime.datetime.now()) + " Example")
