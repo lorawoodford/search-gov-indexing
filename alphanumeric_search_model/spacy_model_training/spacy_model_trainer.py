@@ -73,9 +73,9 @@ es_url = "http://es717x3:9200/"
 
 i14y_list = []
 
-training_creation_queue = queue.Queue(maxsize=100000)
+training_creation_queue = queue.Queue(maxsize=1000)
 ray_object_id_queue = queue.Queue(maxsize=4500)
-processed_queue = queue.Queue(maxsize=100000)
+processed_queue = queue.Queue(maxsize=2000)
 
 class TrainingDataProcessor(Thread):
     def __init__(self, training_dataset):
@@ -216,13 +216,13 @@ def create_ray_threads(nlp):
     print(str(datetime.datetime.now()) + " Creating Ray Threads")    
     nlp_ref = ray.put(nlp)
     thread_array = []
-    for n in range(3):
+    for n in range((os.cpu_count() - 5)):
         example_creator = ExampleCreator(nlp_ref)
         example_creator.daemon = True
-        example_creator.name = "Example_Creator"
+        example_creator.name = "Example_Creator_" + str(n)
         example_creator.start()
         thread_array.append(example_creator)
-    for n in range((os.cpu_count() - 4)):
+    for n in range(3):
         print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + str(n))
         t = ExamplePusher()
         t.daemon = True
