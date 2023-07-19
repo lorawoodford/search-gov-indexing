@@ -216,7 +216,7 @@ def create_ray_threads(nlp):
     print(str(datetime.datetime.now()) + " Creating Ray Threads")    
     nlp_ref = ray.put(nlp)
     thread_array = []
-    for n in range((os.cpu_count() - 5)):
+    for n in range(3):
         example_creator = ExampleCreator(nlp_ref)
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
@@ -343,7 +343,7 @@ ray.init(num_cpus=14, num_gpus=0)
 #     json.dump(TRAINING_DATA, f, indent=4)
 
 print(str(datetime.datetime.now()) + " Reading in Training Dataset")
-with open ("/mnt/trainingdata/ksummers/training_data.json", "r", encoding="utf-8") as f:
+with open ("/mnt/scratch/ksummers/training_data.json", "r", encoding="utf-8") as f:
     TRAINING_DATA = json.load(f)
 print(str(datetime.datetime.now()) + " Finished reading Training Dataset")
 
