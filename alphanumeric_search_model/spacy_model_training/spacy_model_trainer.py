@@ -212,6 +212,11 @@ def remove_english_words_from_list(list_of_words):
             list_of_words.remove(word)
     return list_of_words
 
+def signal_handler():
+    print(str(datetime.datetime.now()) + " Training Queue Size: " + str(training_creation_queue.qsize()))
+    print(str(datetime.datetime.now()) + " Ray Object Id Queue Size: " + str(ray_object_id_queue.qsize()))
+    print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
+
 def create_ray_threads(nlp):
     print(str(datetime.datetime.now()) + " Creating Ray Threads")    
     nlp_ref = ray.put(nlp)
@@ -270,8 +275,8 @@ def train_spacy(data, iterations):
                     losses = losses
                 )
                 num_trainings_processed = num_trainings_processed + 1
-                if(num_trainings_processed == 1000):
-                    print(str(datetime.datetime.now()) + " 1000 trainings processed")
+                if(num_trainings_processed == 100):
+                    print(str(datetime.datetime.now()) + " 100 trainings processed")
                     print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
                     num_trainings_processed = 0
             # for text, annotations in TRAIN_DATA:
@@ -341,6 +346,8 @@ ray.init(num_cpus=14, num_gpus=0)
 
 # with open ("/mnt/trainingdata/ksummers/training_data.json", "w", encoding="utf-8") as f:
 #     json.dump(TRAINING_DATA, f, indent=4)
+
+signal.signal(signal.SIGUSR1, signal_handler)
 
 print(str(datetime.datetime.now()) + " Reading in Training Dataset")
 with open ("/mnt/scratch/ksummers/training_data.json", "r", encoding="utf-8") as f:
