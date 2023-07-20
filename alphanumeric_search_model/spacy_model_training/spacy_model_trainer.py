@@ -221,7 +221,7 @@ def signal_handler():
 def build_nlp(training_data):
     nlp = spacy.blank("en")
     if "ner" not in nlp.pipe_names:
-        ner = nlp.create_pip("ner")
+        ner = nlp.create_pipe("ner")
         nlp.add_pipe("ner", last=True)
     print(str(datetime.datetime.now()) + " Starting Entity processing")
     for _, annotations in training_data:
