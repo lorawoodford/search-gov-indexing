@@ -245,14 +245,14 @@ def create_ray_threads(nlp_filename):
     # it appears that ray has some locking methods for concurrency
     # nlp_ref = ray.put(nlp)
     thread_array = []
-    for n in range(6):
+    for n in range(1):
         nlp_ref = ray.put(load_nlp(nlp_filename))
         example_creator = ExampleCreator(nlp_ref)
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
         example_creator.start()
         thread_array.append(example_creator)
-    for n in range(32):
+    for n in range(1):
         print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + str(n))
         t = ExamplePusher()
         t.daemon = True
