@@ -217,11 +217,32 @@ def signal_handler():
     print(str(datetime.datetime.now()) + " Ray Object Id Queue Size: " + str(ray_object_id_queue.qsize()))
     print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
 
-def create_ray_threads(nlp):
+def build_nlp(training_data):
+    nlp = spacy.blank("en")
+    if "ner" not in nlp.pipe_names:
+        ner = nlp.create_pip("ner")
+        nlp.add_pipe("ner", last=True)
+    print(str(datetime.datetime.now()) + " Starting Entity processing")
+    for _, annotations in training_data:
+        for ent in annotations.get("entities"):
+            ner.add_label(ent[2])
+    print(str(datetime.datetime.now()) + " Finished Entity processing")
+    return nlp
+
+def save_nlp(filename, nlp):
+    nlp.to_disk(filename)
+
+def load_nlp(filename):
+    return spacy.blank("en").from_disk(filename)
+
+def create_ray_threads(nlp_filename):
     print(str(datetime.datetime.now()) + " Creating Ray Threads")    
-    nlp_ref = ray.put(nlp)
+    # This needs to be changed to a single instance of NLP for each Ray Process
+    # it appears that ray has some locking methods for concurrency
+    # nlp_ref = ray.put(nlp)
     thread_array = []
     for n in range(3):
+        nlp_ref = ray.put(load_nlp(nlp_filename))
         example_creator = ExampleCreator(nlp_ref)
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
@@ -240,20 +261,23 @@ def create_ray_threads(nlp):
 def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Starting Training")
     TRAIN_DATA = data
-    nlp = spacy.blank("en")
-    print(nlp.pipe_names)
-    if "ner" not in nlp.pipe_names:
-        ner = nlp.create_pipe("ner")
-        nlp.add_pipe("ner", last=True)
-    print(str(datetime.datetime.now()) + " Starting Entity processing")
-    for _, annotations in TRAIN_DATA:
-        for ent in annotations.get("entities"):
-            ner.add_label(ent[2])
-    print(str(datetime.datetime.now()) + " Finished Entity processing")
+    nlp = build_nlp(data)
+    save_nlp("/mnt/scratch/ksummers/temp_model", nlp)
+    # nlp = load_nlp("/mnt/scratch/ksummers/temp_model")
+    thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
+    # nlp = spacy.blank("en")
+    # print(nlp.pipe_names)
+    # if "ner" not in nlp.pipe_names:
+    #     ner = nlp.create_pipe("ner")
+    #     nlp.add_pipe("ner", last=True)
+    # print(str(datetime.datetime.now()) + " Starting Entity processing")
+    # for _, annotations in TRAIN_DATA:
+    #     for ent in annotations.get("entities"):
+    #         ner.add_label(ent[2])
+    # print(str(datetime.datetime.now()) + " Finished Entity processing")
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
         example_pusher_threads = []
-        thread_array = create_ray_threads(nlp)
         optimizer = nlp.begin_training()
         for iteration in range(iterations):
             print(str(datetime.datetime.now()) + " Starting iteration: " + str(iteration))
