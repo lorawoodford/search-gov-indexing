@@ -74,8 +74,8 @@ es_url = "http://es717x3:9200/"
 
 i14y_list = []
 
-training_creation_queue = queue.Queue(maxsize=1000)
-ray_object_id_queue = queue.Queue(maxsize=4500)
+training_creation_queue = queue.Queue(maxsize=100)
+ray_object_id_queue = queue.Queue(maxsize=450)
 processed_queue = queue.Queue(maxsize=2000)
 
 class TrainingDataProcessor(Thread):
@@ -85,8 +85,10 @@ class TrainingDataProcessor(Thread):
     
     def run(self):
         print(str(datetime.datetime.now()) + " Starting Training Data Processor")
+        print(str(datetime.datetime.now()) + " Training Dataset Length: " + str(len(self.training_dataset)))
         for text, annotations in self.training_dataset:
             training_creation_queue.put([text,annotations])
+        print(str(datetime.datetime.now()) + " Finished Training Data Processor")
 
 # End TrainingDataProcessor
 
@@ -234,6 +236,7 @@ def save_nlp(filename, nlp):
     nlp.to_disk(filename)
 
 def load_nlp(filename):
+    print(str(datetime.datetime.now()) + " Loading " + filename + " from disk")
     return spacy.blank("en").from_disk(filename)
 
 def create_ray_threads(nlp_filename):
@@ -242,7 +245,7 @@ def create_ray_threads(nlp_filename):
     # it appears that ray has some locking methods for concurrency
     # nlp_ref = ray.put(nlp)
     thread_array = []
-    for n in range(3):
+    for n in range(6):
         nlp_ref = ray.put(load_nlp(nlp_filename))
         example_creator = ExampleCreator(nlp_ref)
         example_creator.daemon = True
@@ -262,20 +265,10 @@ def create_ray_threads(nlp_filename):
 def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Starting Training")
     TRAIN_DATA = data
-    nlp = build_nlp(data)
-    save_nlp("/mnt/scratch/ksummers/temp_model", nlp)
-    # nlp = load_nlp("/mnt/scratch/ksummers/temp_model")
+    # nlp = build_nlp(data)
+    # save_nlp("/mnt/scratch/ksummers/temp_model", nlp)
+    nlp = load_nlp("/mnt/scratch/ksummers/temp_model")
     thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
-    # nlp = spacy.blank("en")
-    # print(nlp.pipe_names)
-    # if "ner" not in nlp.pipe_names:
-    #     ner = nlp.create_pipe("ner")
-    #     nlp.add_pipe("ner", last=True)
-    # print(str(datetime.datetime.now()) + " Starting Entity processing")
-    # for _, annotations in TRAIN_DATA:
-    #     for ent in annotations.get("entities"):
-    #         ner.add_label(ent[2])
-    # print(str(datetime.datetime.now()) + " Finished Entity processing")
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
         example_pusher_threads = []
@@ -292,7 +285,7 @@ def train_spacy(data, iterations):
             print(str(datetime.datetime.now()) + " Starting Actual Training")
             num_trainings_processed = 0
             print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
-            while(not processed_queue.empty() or trainer.is_alive()):
+            while(trainer.is_alive() or not processed_queue.is_empty()):
                 nlp.update(
                     processed_queue.get(),
                     drop = 0.2,
