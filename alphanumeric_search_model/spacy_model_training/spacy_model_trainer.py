@@ -74,7 +74,7 @@ es_url = "http://es717x3:9200/"
 
 i14y_list = []
 
-training_creation_queue = queue.Queue(maxsize=500)
+training_creation_queue = queue.Queue(maxsize=1000)
 ray_object_id_queue = queue.Queue(maxsize=4500)
 processed_queue = queue.Queue(maxsize=2000)
 
