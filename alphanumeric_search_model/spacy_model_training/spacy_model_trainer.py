@@ -8,6 +8,7 @@ import requests
 import json
 import spacy
 import sys
+import signal
 import datetime
 import time
 import random
