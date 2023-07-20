@@ -74,7 +74,7 @@ es_url = "http://es717x3:9200/"
 
 i14y_list = []
 
-training_creation_queue = queue.Queue(maxsize=100)
+training_creation_queue = queue.Queue(maxsize=200)
 ray_object_id_queue = queue.Queue(maxsize=450)
 processed_queue = queue.Queue(maxsize=2000)
 
@@ -293,10 +293,11 @@ def train_spacy(data, iterations):
                     losses = losses
                 )
                 num_trainings_processed = num_trainings_processed + 1
-                if(num_trainings_processed == 100):
-                    print(str(datetime.datetime.now()) + " 100 trainings processed")
+                if(num_trainings_processed % 100 == 0):
+                    print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
+                    print(str(datetime.datetime.now()) + " Training Queue Size: " + str(training_creation_queue.qsize()))
+                    print(str(datetime.datetime.now()) + " Ray Object Id Queue Size: " + str(ray_object_id_queue.qsize()))
                     print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
-                    num_trainings_processed = 0
             # for text, annotations in TRAIN_DATA:
             #     example = Example.from_dict(nlp.make_doc(text), annotations) # This needs to be parallelized, not just multithreaded
             #     print(str(datetime.datetime.now()) + " Example")
