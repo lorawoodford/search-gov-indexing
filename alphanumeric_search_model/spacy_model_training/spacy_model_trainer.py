@@ -74,13 +74,12 @@ es_url = "http://es717x3:9200/"
 
 i14y_list = []
 
-# Keep these queue sizes relatively small, as anything larger than 1000 for the
+# Keep these queue sizes relatively small, as anything larger than 10000 for the
 # Training_Creation_Queue will bring a 64GB EC2 Instance to it's knees
-training_creation_queue = queue.Queue(maxsize=1000)
+training_creation_queue = queue.Queue(maxsize=2000)
 ray_object_id_queue = queue.Queue(maxsize=4500)
 processed_queue = queue.Queue(maxsize=2000)
 
-@ray.remote
 class TrainingDataProcessor(Thread):
     def __init__(self, training_dataset):
         Thread.__init__(self)
@@ -282,7 +281,7 @@ def train_spacy(data, iterations):
             print(str(datetime.datetime.now()) + " Finished shuffling data")
             losses = {}
             # Create Worker Threads
-            trainer = TrainingDataProcessor(TRAIN_DATA)
+            trainer = TrainingDataProcessor.remote(TRAIN_DATA)
             trainer.start()
             time.sleep(10)
             print(str(datetime.datetime.now()) + " Starting Actual Training")
