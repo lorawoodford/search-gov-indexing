@@ -281,7 +281,7 @@ def train_spacy(data, iterations):
             print(str(datetime.datetime.now()) + " Finished shuffling data")
             losses = {}
             # Create Worker Threads
-            trainer = TrainingDataProcessor.remote(TRAIN_DATA)
+            trainer = TrainingDataProcessor(TRAIN_DATA)
             trainer.start()
             time.sleep(10)
             print(str(datetime.datetime.now()) + " Starting Actual Training")
