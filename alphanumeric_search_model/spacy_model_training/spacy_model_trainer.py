@@ -106,8 +106,8 @@ class ExampleProcessor(Process):
     def run(self):
         # nlp_ref = ray.put(self.nlp)
         print(str(datetime.datetime.now()) + " Starting Example Creator")
-        remote_container = ray.remote(ExampleContainer)
-        actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp))
+        # remote_container = ray.remote(ExampleContainer)
+        # actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp))
         while(True):
             example_array = training_creation_queue.get()
             # ray_obj = create_example.remote(example[0], example[1], self.nlp)
@@ -253,7 +253,7 @@ def create_ray_threads(nlp_filename):
     thread_array = []
     for n in range(8):
         # nlp_ref = ray.put(load_nlp(nlp_filename))
-        example_creator = ExampleCreator(load_nlp(nlp_filename))
+        example_creator = ExampleProcessor(load_nlp(nlp_filename))
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
         example_creator.start()
