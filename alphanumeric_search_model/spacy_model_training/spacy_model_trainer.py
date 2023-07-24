@@ -17,10 +17,13 @@ from spacy.lang.en import English
 from spacy.pipeline import EntityRuler
 from spacy.training.example import Example
 
-from threading import Thread
-import queue
+# from threading import Thread
+# import queue
+# import ray
 
-import ray
+import multiprocessing
+from multiprocessing import Process
+
 
 query1 = {
     "aggs": {
@@ -76,13 +79,13 @@ i14y_list = []
 
 # Keep these queue sizes relatively small, as anything larger than 10000 for the
 # Training_Creation_Queue will bring a 64GB EC2 Instance to it's knees
-training_creation_queue = queue.Queue(maxsize=2000)
-ray_object_id_queue = queue.Queue(maxsize=4500)
-processed_queue = queue.Queue(maxsize=2000)
+training_creation_queue = multiprocessing.Queue(maxsize=2000)
+# ray_object_id_queue = multiprocessing.Queue(maxsize=4500)
+processed_queue = multiprocessing.Queue(maxsize=2000)
 
-class TrainingDataProcessor(Thread):
+class TrainingDataProcessor(Process):
     def __init__(self, training_dataset):
-        Thread.__init__(self)
+        Process.__init__(self)
         self.training_dataset = training_dataset
     
     def run(self):
@@ -95,9 +98,9 @@ class TrainingDataProcessor(Thread):
 # End TrainingDataProcessor
 
 
-class ExampleCreator(Thread):
+class ExampleProcessor(Process):
     def __init__(self, nlp):
-        Thread.__init__(self)
+        Process.__init__(self)
         self.nlp = nlp
     
     def run(self):
@@ -106,12 +109,13 @@ class ExampleCreator(Thread):
         remote_container = ray.remote(ExampleContainer)
         actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp))
         while(True):
-            example = training_creation_queue.get()
+            example_array = training_creation_queue.get()
             # ray_obj = create_example.remote(example[0], example[1], self.nlp)
             # print(example)
-            ray_obj = actor_handle.create_example.remote(example)
+            # ray_obj = actor_handle.create_example.remote(example)
             # print(ray_obj)
-            ray_object_id_queue.put(ray_obj)
+            # ray_object_id_queue.put(ray_obj)
+            processed_queue.put([Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])])
     
     # @ray.remote
     # def create_example(text, annotations, nlp):
@@ -120,26 +124,26 @@ class ExampleCreator(Thread):
 # End ExampleCreator
 
 # @ray.remote
-class ExampleContainer:
-    def __init__(self, nlp):
-        self.nlp = nlp
+# class ExampleContainer:
+#     def __init__(self, nlp):
+#         self.nlp = nlp
 
-    def create_example(self, example_array):
-        return [Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])]
+#     def create_example(self, example_array):
+#         return [Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])]
 
-# End ExampleContainer
+# # End ExampleContainer
 
-class ExamplePusher(Thread):
-    def __init__(self):
-        Thread.__init__(self)
+# class ExamplePusher(Process):
+#     def __init__(self):
+#         Process.__init__(self)
     
-    def run(self):
-        print(str(datetime.datetime.now()) + " Starting Example Pusher")
-        while(True):
-            try:
-                processed_queue.put(ray.get(ray_object_id_queue.get()))
-            except Exception:
-                print(str(datetime.datetime.now()) + " Example Pusher Exception, restarting")
+#     def run(self):
+#         print(str(datetime.datetime.now()) + " Starting Example Pusher")
+#         while(True):
+#             try:
+#                 processed_queue.put(ray.get(ray_object_id_queue.get()))
+#             except Exception:
+#                 print(str(datetime.datetime.now()) + " Example Pusher Exception, restarting")
 
 
 # End ExamplePusher
