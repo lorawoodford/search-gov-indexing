@@ -252,8 +252,8 @@ def create_ray_threads(nlp_filename):
     # nlp_ref = ray.put(nlp)
     thread_array = []
     for n in range(8):
-        nlp_ref = ray.put(load_nlp(nlp_filename))
-        example_creator = ExampleCreator(nlp_ref)
+        # nlp_ref = ray.put(load_nlp(nlp_filename))
+        example_creator = ExampleCreator(load_nlp(nlp_filename))
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
         example_creator.start()
