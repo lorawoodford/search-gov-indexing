@@ -251,20 +251,20 @@ def create_ray_threads(nlp_filename):
     # it appears that ray has some locking methods for concurrency
     # nlp_ref = ray.put(nlp)
     thread_array = []
-    for n in range(6):
+    for n in range(8):
         nlp_ref = ray.put(load_nlp(nlp_filename))
         example_creator = ExampleCreator(nlp_ref)
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
         example_creator.start()
         thread_array.append(example_creator)
-    for n in range(9):
-        print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + str(n))
-        t = ExamplePusher()
-        t.daemon = True
-        t.name = "Example_Pusher_" + str(n)
-        t.start()
-        thread_array.append(t)
+    # for n in range(9):
+    #     print(str(datetime.datetime.now()) + " Creating Ray Getting Thread: " + str(n))
+    #     t = ExamplePusher()
+    #     t.daemon = True
+    #     t.name = "Example_Pusher_" + str(n)
+    #     t.start()
+    #     thread_array.append(t)
     print(str(datetime.datetime.now()) + " Finished creating Ray Threads")
     return(thread_array)
 
@@ -351,7 +351,7 @@ print(str(datetime.datetime.now()) + " Starting Training")
 gpu = spacy.require_gpu()
 print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
 print(spacy.info)
-ray.init(num_cpus=14, num_gpus=0)
+# ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
 # TRAINING_DATA = []
