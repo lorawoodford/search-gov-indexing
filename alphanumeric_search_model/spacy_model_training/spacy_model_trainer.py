@@ -115,7 +115,7 @@ class ExampleProcessor(Process):
             # ray_obj = actor_handle.create_example.remote(example)
             # print(ray_obj)
             # ray_object_id_queue.put(ray_obj)
-            processed_queue.put([Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])])
+            processed_queue.put(Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1]))
     
     # @ray.remote
     # def create_example(text, annotations, nlp):
@@ -292,7 +292,7 @@ def train_spacy(data, iterations):
             print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
             while(trainer.is_alive() or not processed_queue.is_empty()):
                 nlp.update(
-                    processed_queue.get(),
+                    [processed_queue.get()],
                     drop = 0.2,
                     sgd = optimizer,
                     losses = losses
