@@ -109,6 +109,7 @@ class ExampleProcessor(Process):
         # remote_container = ray.remote(ExampleContainer)
         # actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp))
         while(True):
+            print("Pulling from queue")
             example_array = training_creation_queue.get()
             # ray_obj = create_example.remote(example[0], example[1], self.nlp)
             # print(example)
@@ -116,6 +117,7 @@ class ExampleProcessor(Process):
             # print(ray_obj)
             # ray_object_id_queue.put(ray_obj)
             example = Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])
+            print("Putting on queue")
             processed_queue.put(example)
     
     # @ray.remote
