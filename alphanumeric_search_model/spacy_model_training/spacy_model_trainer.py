@@ -251,7 +251,7 @@ def create_ray_threads(nlp_filename):
     # it appears that ray has some locking methods for concurrency
     # nlp_ref = ray.put(nlp)
     thread_array = []
-    for n in range(2):
+    for n in range(1):
         # nlp_ref = ray.put(load_nlp(nlp_filename))
         example_creator = ExampleProcessor(load_nlp(nlp_filename))
         example_creator.daemon = True
@@ -274,7 +274,6 @@ def train_spacy(data, iterations):
     # nlp = build_nlp(data)
     # save_nlp("/mnt/scratch/ksummers/temp_model", nlp)
     nlp = load_nlp("/mnt/scratch/ksummers/temp_model")
-    thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
         example_pusher_threads = []
@@ -373,6 +372,8 @@ print(spacy.info)
 #     json.dump(TRAINING_DATA, f, indent=4)
 
 signal.signal(signal.SIGUSR1, signal_handler)
+
+thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
 
 print(str(datetime.datetime.now()) + " Reading in Training Dataset")
 with open ("/mnt/scratch/ksummers/training_data.json", "r", encoding="utf-8") as f:
