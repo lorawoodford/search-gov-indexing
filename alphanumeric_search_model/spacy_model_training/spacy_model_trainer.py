@@ -17,7 +17,7 @@ from spacy.lang.en import English
 from spacy.pipeline import EntityRuler
 from spacy.training.example import Example
 
-# from threading import Thread
+from threading import Thread
 # import queue
 # import ray
 
@@ -83,7 +83,7 @@ training_creation_queue = multiprocessing.Queue(maxsize=2000)
 # ray_object_id_queue = multiprocessing.Queue(maxsize=4500)
 processed_queue = multiprocessing.Queue(maxsize=2000)
 
-class TrainingDataProcessor(Process):
+class TrainingDataProcessor(Thread):
     def __init__(self, training_dataset):
         Process.__init__(self)
         self.training_dataset = training_dataset
