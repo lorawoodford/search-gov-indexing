@@ -251,7 +251,7 @@ def create_ray_threads(nlp_filename):
     # it appears that ray has some locking methods for concurrency
     # nlp_ref = ray.put(nlp)
     thread_array = []
-    for n in range(8):
+    for n in range(2):
         # nlp_ref = ray.put(load_nlp(nlp_filename))
         example_creator = ExampleProcessor(load_nlp(nlp_filename))
         example_creator.daemon = True
