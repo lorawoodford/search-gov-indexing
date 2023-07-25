@@ -85,7 +85,7 @@ processed_queue = multiprocessing.Queue(maxsize=2000)
 
 class TrainingDataProcessor(Thread):
     def __init__(self, training_dataset):
-        Process.__init__(self)
+        Thread.__init__(self)
         self.training_dataset = training_dataset
     
     def run(self):
