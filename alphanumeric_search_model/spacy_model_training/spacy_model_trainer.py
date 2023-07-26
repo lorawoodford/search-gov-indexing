@@ -110,7 +110,7 @@ class ExampleProcessor(Process):
         # actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp))
         nlp = self.nlp
         while(True):
-            print("Pulling from queue")
+            # print("Pulling from queue")
             example_array = training_creation_queue.get(block=True, timeout=None)
             # ray_obj = create_example.remote(example[0], example[1], self.nlp)
             # print(example)
@@ -120,9 +120,9 @@ class ExampleProcessor(Process):
             predicted = nlp.make_doc(example_array[0])
             text = example_array[1]
             example = Example.from_dict(predicted, text)
-            print(example)
-            time.sleep(1)
-            print("Putting on queue")
+            # print(example)
+            # time.sleep(1)
+            # print("Putting on queue")
             processed_queue.put(example, block=True, timeout=None)
     
     def load_nlp(filename):
@@ -360,9 +360,7 @@ def train_spacy(data, iterations):
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
 # gpu = spacy.require_gpu()
-gpu = False
-print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
-print(spacy.info)
+#gpu = False
 # ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
@@ -387,6 +385,10 @@ print(spacy.info)
 signal.signal(signal.SIGUSR1, signal_handler)
 
 thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
+
+gpu = spacy.prefer_gpu()
+print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
+print(spacy.info)
 
 print(str(datetime.datetime.now()) + " Reading in Training Dataset")
 with open ("/mnt/scratch/ksummers/training_data.json", "r", encoding="utf-8") as f:
