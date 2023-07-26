@@ -359,7 +359,8 @@ def train_spacy(data, iterations):
 
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
-gpu = spacy.require_gpu()
+# gpu = spacy.require_gpu()
+gpu = False
 print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
 print(spacy.info)
 # ray.init(num_cpus=14, num_gpus=0)
