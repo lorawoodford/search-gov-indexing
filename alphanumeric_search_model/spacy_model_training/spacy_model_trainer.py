@@ -117,7 +117,11 @@ class ExampleProcessor(Process):
             # ray_obj = actor_handle.create_example.remote(example)
             # print(ray_obj)
             # ray_object_id_queue.put(ray_obj)
-            example = Example.from_dict(nlp.make_doc(example_array[0]), example_array[1])
+            predicted = nlp.make_doc(example_array[0])
+            text = example_array[1]
+            example = Example.from_dict(predicted, text)
+            print(example)
+            time.sleep(1)
             print("Putting on queue")
             processed_queue.put(example, block=True, timeout=None)
     
