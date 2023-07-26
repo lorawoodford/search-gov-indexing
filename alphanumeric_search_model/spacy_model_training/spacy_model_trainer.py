@@ -263,7 +263,7 @@ def create_ray_threads(nlp_filename):
     # it appears that ray has some locking methods for concurrency
     # nlp_ref = ray.put(nlp)
     thread_array = []
-    for n in range(1):
+    for n in range(10):
         # nlp_ref = ray.put(load_nlp(nlp_filename))
         example_creator = ExampleProcessor(nlp_filename)
         example_creator.daemon = True
@@ -304,7 +304,7 @@ def train_spacy(data, iterations):
             print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
             while(trainer.is_alive() or not processed_queue.is_empty()):
                 nlp.update(
-                    [processed_queue.get()],
+                    processed_queue.get(),
                     drop = 0.2,
                     sgd = optimizer,
                     losses = losses
@@ -313,7 +313,7 @@ def train_spacy(data, iterations):
                 if(num_trainings_processed % 100 == 0):
                     print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
                     print(str(datetime.datetime.now()) + " Training Queue Size: " + str(training_creation_queue.qsize()))
-                    print(str(datetime.datetime.now()) + " Ray Object Id Queue Size: " + str(ray_object_id_queue.qsize()))
+                    # print(str(datetime.datetime.now()) + " Ray Object Id Queue Size: " + str(ray_object_id_queue.qsize()))
                     print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
             # for text, annotations in TRAIN_DATA:
             #     example = Example.from_dict(nlp.make_doc(text), annotations) # This needs to be parallelized, not just multithreaded
