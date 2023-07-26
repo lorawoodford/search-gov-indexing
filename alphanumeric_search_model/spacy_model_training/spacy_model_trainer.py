@@ -119,7 +119,7 @@ class ExampleProcessor(Process):
             # ray_object_id_queue.put(ray_obj)
             predicted = nlp.make_doc(example_array[0])
             text = example_array[1]
-            example = Example.from_dict(predicted, text)
+            example = [Example.from_dict(predicted, text)]
             # print(example)
             # time.sleep(1)
             # print("Putting on queue")
