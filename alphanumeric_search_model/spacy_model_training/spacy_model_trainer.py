@@ -99,15 +99,16 @@ class TrainingDataProcessor(Thread):
 
 
 class ExampleProcessor(Process):
-    def __init__(self, nlp):
+    def __init__(self, nlp_filename):
         Process.__init__(self)
-        self.nlp = nlp
+        self.nlp = load_nlp(nlp_filename)
     
     def run(self):
         # nlp_ref = ray.put(self.nlp)
         print(str(datetime.datetime.now()) + " Starting Example Creator")
         # remote_container = ray.remote(ExampleContainer)
         # actor_handle = remote_container.remote(self.nlp) #ExampleContainer.remote(self.nlp))
+        nlp = self.nlp
         while(True):
             print("Pulling from queue")
             example_array = training_creation_queue.get(block=True, timeout=None)
@@ -116,10 +117,14 @@ class ExampleProcessor(Process):
             # ray_obj = actor_handle.create_example.remote(example)
             # print(ray_obj)
             # ray_object_id_queue.put(ray_obj)
-            example = Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])
+            example = Example.from_dict(nlp.make_doc(example_array[0]), example_array[1])
             print("Putting on queue")
             processed_queue.put(example, block=True, timeout=None)
     
+    def load_nlp(filename):
+        print(str(datetime.datetime.now()) + " Loading " + filename + " from disk")
+        return spacy.blank("en").from_disk(filename)
+
     # @ray.remote
     # def create_example(text, annotations, nlp):
     #     return [Example.from_dict(nlp.make_doc(text), annotations)]
@@ -256,7 +261,7 @@ def create_ray_threads(nlp_filename):
     thread_array = []
     for n in range(1):
         # nlp_ref = ray.put(load_nlp(nlp_filename))
-        example_creator = ExampleProcessor(load_nlp(nlp_filename))
+        example_creator = ExampleProcessor(nlp_filename)
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
         example_creator.start()
