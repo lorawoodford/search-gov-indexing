@@ -310,6 +310,7 @@ def train_spacy(data, iterations):
                     losses = losses
                 )
                 num_trainings_processed = num_trainings_processed + 1
+                print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
                 if(num_trainings_processed % 100 == 0):
                     print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
                     print(str(datetime.datetime.now()) + " Training Queue Size: " + str(training_creation_queue.qsize()))
@@ -386,7 +387,7 @@ signal.signal(signal.SIGUSR1, signal_handler)
 
 thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
 
-gpu = spacy.prefer_gpu()
+gpu = spacy.require_gpu()
 print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
 print(spacy.info)
 
