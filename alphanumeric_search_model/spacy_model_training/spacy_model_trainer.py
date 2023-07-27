@@ -100,7 +100,7 @@ class TrainingDataProcessor(Thread):
             training_creation_queue.put([text,annotations])
             if(training_creation_queue.qsize() > 1900):
                 print(str(datetime.datetime.now()) + " Training Data Processor Sleeping for 30 seconds")
-                time.sleep(10)
+                time.sleep(30)
                 print(str(datetime.datetime.now()) + " Training Data Processor Waking Up")
         # Lock.acquire
         print(str(datetime.datetime.now()) + " Finished Training Data Processor")
@@ -320,7 +320,7 @@ def train_spacy(data, iterations):
                     losses = losses
                 )
                 num_trainings_processed = num_trainings_processed + 1
-                print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
+                # print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
                 if(num_trainings_processed % 100 == 0):
                     print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
                     print(str(datetime.datetime.now()) + " Training Queue Size: " + str(training_creation_queue.qsize()))
