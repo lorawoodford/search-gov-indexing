@@ -98,6 +98,10 @@ class TrainingDataProcessor(Thread):
         # Lock.release
         for text, annotations in self.training_dataset:
             training_creation_queue.put([text,annotations])
+            if(training_creation_queue.qsize() > 1900):
+                print(str(datetime.datetime.now()) + " Training Data Processor Sleeping for 5 seconds")
+                time.sleep(5)
+                print(str(datetime.datetime.now()) + " Training Data Processor Waking Up")
         # Lock.acquire
         print(str(datetime.datetime.now()) + " Finished Training Data Processor")
 
