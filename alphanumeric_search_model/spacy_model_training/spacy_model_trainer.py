@@ -267,9 +267,9 @@ def create_ray_threads(nlp_filename):
 def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Starting Training")
     TRAIN_DATA = data
-    # nlp = build_nlp(data)
+    nlp = build_nlp(data)
     # save_nlp("/mnt/scratch/ksummers/temp_model", nlp)
-    nlp = load_nlp("/mnt/scratch/ksummers/temp_model")
+    # nlp = load_nlp("/mnt/scratch/ksummers/temp_model")
     thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
