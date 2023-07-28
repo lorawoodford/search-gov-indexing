@@ -76,7 +76,7 @@ i14y_list = []
 
 # Keep these queue sizes relatively small, as anything larger than 10000 for the
 # Training_Creation_Queue will bring a 64GB EC2 Instance to it's knees
-training_creation_queue = queue.Queue(maxsize=2000)
+training_creation_queue = queue.Queue(maxsize=1000)
 ray_object_id_queue = queue.Queue(maxsize=4500)
 processed_queue = queue.Queue(maxsize=2000)
 
@@ -248,7 +248,8 @@ def create_ray_threads(nlp_filename):
     # nlp_ref = ray.put(nlp)
     thread_array = []
     for n in range(6):
-        nlp_ref = ray.put(load_nlp(nlp_filename))
+        nlp = load_nlp(nlp_filename)
+        nlp_ref = ray.put(nlp)
         example_creator = ExampleCreator(nlp_ref)
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
@@ -270,7 +271,6 @@ def train_spacy(data, iterations):
     nlp = build_nlp(data)
     # save_nlp("/mnt/scratch/ksummers/temp_model", nlp)
     # nlp = load_nlp("/mnt/scratch/ksummers/temp_model")
-    thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
         example_pusher_threads = []
@@ -351,6 +351,7 @@ ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
 # TRAINING_DATA = []
+thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
 
 # for item in i14y_list:
 #     doc = get_test_document_from_elasticsearch(item)
