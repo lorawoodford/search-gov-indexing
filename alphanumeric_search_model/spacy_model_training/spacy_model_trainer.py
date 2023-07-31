@@ -125,7 +125,7 @@ class ExampleContainer:
         self.nlp = nlp
 
     def create_example(self, example_array):
-        return [Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])]
+        return Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])
 
 # End ExampleContainer
 
@@ -289,12 +289,13 @@ def train_spacy(data, iterations):
             print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
             while(trainer.is_alive() or not processed_queue.is_empty()):
                 nlp.update(
-                    processed_queue.get(),
+                    [processed_queue.get()],
                     drop = 0.2,
                     sgd = optimizer,
                     losses = losses
                 )
                 num_trainings_processed = num_trainings_processed + 1
+                print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
                 if(num_trainings_processed % 100 == 0):
                     print(str(datetime.datetime.now()) + " " + str(num_trainings_processed) + " trainings processed")
                     print(str(datetime.datetime.now()) + " Training Queue Size: " + str(training_creation_queue.qsize()))
