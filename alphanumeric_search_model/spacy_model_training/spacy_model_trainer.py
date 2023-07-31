@@ -122,10 +122,16 @@ class ExampleCreator(Thread):
 # @ray.remote
 class ExampleContainer:
     def __init__(self, nlp):
-        self.nlp = nlp
+        spacy.require_cpu
+        self.nlp = load_nlp(nlp)
+        # self.nlp = nlp
 
     def create_example(self, example_array):
         return Example.from_dict(self.nlp.make_doc(example_array[0]), example_array[1])
+    
+    def load_nlp(filename):
+        print(str(datetime.datetime.now()) + " Loading " + filename + " from disk")
+        return spacy.blank("en").from_disk(filename)
 
 # End ExampleContainer
 
@@ -248,8 +254,8 @@ def create_ray_threads(nlp_filename):
     # nlp_ref = ray.put(nlp)
     thread_array = []
     for n in range(4):
-        nlp = load_nlp(nlp_filename)
-        nlp_ref = ray.put(nlp)
+        # nlp = load_nlp(nlp_filename)
+        nlp_ref = ray.put(nlp_filename)
         example_creator = ExampleCreator(nlp_ref)
         example_creator.daemon = True
         example_creator.name = "Example_Creator_" + str(n)
@@ -345,14 +351,16 @@ def train_spacy(data, iterations):
 
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
-gpu = spacy.require_gpu()
-print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
 print(spacy.info)
 ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
 # TRAINING_DATA = []
 thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
+
+gpu = spacy.require_gpu()
+print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
+
 
 # for item in i14y_list:
 #     doc = get_test_document_from_elasticsearch(item)
