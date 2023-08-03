@@ -27,7 +27,7 @@ query1 = {
         "regex_count": {
             "terms": {
                 "field": "REPLACE_THIS.keyword",
-                "size": 1000
+                "size": 10
             }
         }
     },
