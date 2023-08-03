@@ -325,58 +325,61 @@ def train_spacy(data, iterations):
     print(str(datetime.datetime.now()) + " Completed Training")
     return(nlp)
 
-# generate_list_from_i14y()
-# i14y_list.sort()
-# # print(i14y_list)
-# print(len(i14y_list))
-# i14y_list = list(set(i14y_list))
-# i14y_list.sort()
-# i14y_list = remove_english_words_from_list(i14y_list)
-# print(len(i14y_list))
-# with open ("data/i14y_list.json", "w", encoding="utf-8") as f:
-#     json.dump(i14y_list, f, indent=4)
+generate_list_from_i14y()
+i14y_list.sort()
+# print(i14y_list)
+print(len(i14y_list))
+i14y_list = list(set(i14y_list))
+i14y_list.sort()
+i14y_list = remove_english_words_from_list(i14y_list)
+print(len(i14y_list))
+with open ("data/i14y_list.json", "w", encoding="utf-8") as f:
+    json.dump(i14y_list, f, indent=4)
 
 # with open("data/i14y_list.json", "r", encoding="utf-8") as f:
 #     i14y_list = json.load(f)
 
 # print(i14y_list)
 # sys.exit(0)
-# test_docs = []
-# for item in i14y_list:
-#     print(item)
-#     test_docs.append(get_test_document_from_elasticsearch(item))
-# # print(get_test_document_from_elasticsearch(i14y_list[0]))
-# print(len(test_docs))
-# generate_rules(create_training_data(i14y_list, "ALPHANUMERIC"))
+test_docs = []
+for item in i14y_list:
+    # print(item)
+    test_docs.append(get_test_document_from_elasticsearch(item))
+# print(get_test_document_from_elasticsearch(i14y_list[0]))
+print(len(test_docs))
+generate_rules(create_training_data(i14y_list, "ALPHANUMERIC"))
 
 # sys.exit(0)
 print(str(datetime.datetime.now()) + " Starting Training")
-print(spacy.info)
-ray.init(num_cpus=14, num_gpus=0)
+# print(spacy.info)
+# ray.init(num_cpus=14, num_gpus=0)
 
 # nlp = spacy.load("alpha_numeric")
 # TRAINING_DATA = []
-thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
+# thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
 
-gpu = spacy.require_gpu()
-print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
+# gpu = spacy.require_gpu()
+# print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
 
 
-# for item in i14y_list:
-#     doc = get_test_document_from_elasticsearch(item)
-#     if doc != None:
-#         doc = doc.strip()
-#         doc = doc.replace("\n", " ")
-#         results = test_model(nlp, doc[:500000])
-#         # print(results)
-#         if results != None:
-#             TRAINING_DATA.append(results)
+for item in i14y_list:
+    doc = get_test_document_from_elasticsearch(item)
+    # Something to consider for later, maybe, is to extract sentences with the alpha numeric strings out
+    if doc != None:
+        doc = doc.strip()
+        doc = doc.replace("\n", " ")
+        results = test_model(nlp, doc[:500000])
+        # print(results)
+        if results != None:
+            TRAINING_DATA.append(results)
 
-# TRAINING_DATA = [ele for ele in TRAINING_DATA if ele != []]
+TRAINING_DATA = [ele for ele in TRAINING_DATA if ele != []]
 # print(TRAINING_DATA)
 
-# with open ("/mnt/trainingdata/ksummers/training_data.json", "w", encoding="utf-8") as f:
-#     json.dump(TRAINING_DATA, f, indent=4)
+with open ("/mnt/trainingdata/ksummers/training_model_sm/training_data.json", "w", encoding="utf-8") as f:
+    json.dump(TRAINING_DATA, f, indent=4)
+
+sys.exit(0)
 
 signal.signal(signal.SIGUSR1, signal_handler)
 
