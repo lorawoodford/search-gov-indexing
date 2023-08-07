@@ -14,7 +14,7 @@ from spacy.training.example import Example
 from threading import Thread
 import queue
 
-import ray
+# import ray
 
 query1 = {
     "aggs": {
