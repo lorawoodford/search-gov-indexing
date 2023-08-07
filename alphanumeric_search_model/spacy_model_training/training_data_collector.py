@@ -84,7 +84,7 @@ def generate_list_from_i14y():
     # print(response)
     # print(response['aggregations']['regex_count']['buckets'])
     # Iterate over keys:
-    print(str(datetime.datetime.now()) + " Iterating over " + len(response['aggregations']['regex_count']['buckets']) + " domains")
+    print(str(datetime.datetime.now()) + " Iterating over " + str(len(response['aggregations']['regex_count']['buckets'])) + " domains")
     for domain in response['aggregations']['regex_count']['buckets']:
         print(domain['key'])
         payload = json.dumps(query2).replace("THIS_AS_WELL", domain['key']).replace("REPLACE_THIS", "domain_name")
