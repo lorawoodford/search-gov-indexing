@@ -181,8 +181,8 @@ print(str(datetime.datetime.now()) + " Starting Training")
 # print(spacy.info)
 # ray.init(num_cpus=14, num_gpus=0)
 
-# nlp = spacy.load("alpha_numeric")
-# TRAINING_DATA = []
+nlp = spacy.load("alpha_numeric")
+TRAINING_DATA = []
 # thread_array = create_ray_threads("/mnt/scratch/ksummers/temp_model")
 
 # gpu = spacy.require_gpu()
