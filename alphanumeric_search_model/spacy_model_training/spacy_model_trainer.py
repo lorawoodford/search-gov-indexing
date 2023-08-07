@@ -312,7 +312,7 @@ def train_spacy(data, iterations):
             print(str(datetime.datetime.now()) + " Starting Actual Training")
             num_trainings_processed = 0
             print(str(datetime.datetime.now()) + " Processed Queue Size: " + str(processed_queue.qsize()))
-            while(trainer.is_alive() or not processed_queue.is_empty()):
+            while(trainer.is_alive() or not processed_queue.empty()):
                 nlp.update(
                     processed_queue.get(),
                     drop = 0.2,
@@ -402,7 +402,7 @@ print(str(datetime.datetime.now()) + " spaCy using GPU: " + str(gpu))
 print(spacy.info)
 
 print(str(datetime.datetime.now()) + " Reading in Training Dataset")
-with open ("/mnt/scratch/ksummers/training_data.json", "r", encoding="utf-8") as f:
+with open ("/mnt/scratch/ksummers/training_model_sm/training_data.json", "r", encoding="utf-8") as f:
     TRAINING_DATA = json.load(f)
 print(str(datetime.datetime.now()) + " Finished reading Training Dataset")
 
