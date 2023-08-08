@@ -195,10 +195,12 @@ for item in i14y_list:
     if doc != None:
         doc = doc.strip()
         doc = doc.replace("\n", " ")
-        results = test_model(nlp, doc[:500000])
-        # print(results)
-        if results != None:
-            TRAINING_DATA.append(results)
+        doc_segments = doc.split(". ")
+        for sentence in doc_segments
+            results = test_model(nlp, doc[:500000])
+            # print(results)
+            if results != None:
+                TRAINING_DATA.append(results)
 
 TRAINING_DATA = [ele for ele in TRAINING_DATA if ele != []]
 # print(TRAINING_DATA)
