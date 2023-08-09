@@ -201,8 +201,8 @@ for item in i14y_list:
             if not item in sentence:
                 doc_segments.remove(sentence)
         print(str(len(doc_segments)))
-        for sentence in doc_segments:
-            results = test_model(nlp, doc[:500000])
+        for sentence in doc_segments[:50]:
+            results = test_model(nlp, sentence[:500000])
             # print(results)
             if results != None:
                 TRAINING_DATA.append(results)
