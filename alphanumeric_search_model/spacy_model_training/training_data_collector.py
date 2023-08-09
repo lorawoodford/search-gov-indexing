@@ -196,6 +196,11 @@ for item in i14y_list:
         doc = doc.strip()
         doc = doc.replace("\n", " ")
         doc_segments = doc.split(". ")
+        print(str(len(doc_segments)))
+        for sentence in doc_segments:
+            if not item in sentence:
+                doc_segments.remove(sentence)
+        print(str(len(doc_segments)))
         for sentence in doc_segments:
             results = test_model(nlp, doc[:500000])
             # print(results)
@@ -204,6 +209,8 @@ for item in i14y_list:
 
 TRAINING_DATA = [ele for ele in TRAINING_DATA if ele != []]
 # print(TRAINING_DATA)
+
+print(str(datetime.datetime.now()) + " Finished processing, saving file")
 
 with open ("/mnt/trainingdata/ksummers/training_model_sm/training_data.json", "w", encoding="utf-8") as f:
     json.dump(TRAINING_DATA, f, indent=4)
