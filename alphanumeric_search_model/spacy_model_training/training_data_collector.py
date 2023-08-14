@@ -84,7 +84,7 @@ def generate_list_from_i14y():
     # print(response)
     # print(response['aggregations']['regex_count']['buckets'])
     for domain in response['aggregations']['regex_count']['buckets']:
-        print(domain["key"] + " " + domain["doc_count"])
+        print(domain["key"] + " " + str(domain["doc_count"]))
     # Iterate over keys:
     print(str(datetime.datetime.now()) + " Iterating over " + str(len(response['aggregations']['regex_count']['buckets'])) + " domains")
     for domain in response['aggregations']['regex_count']['buckets']:
