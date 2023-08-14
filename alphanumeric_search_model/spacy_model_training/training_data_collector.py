@@ -21,7 +21,7 @@ query1 = {
         "regex_count": {
             "terms": {
                 "field": "REPLACE_THIS.keyword",
-                "size": 1000
+                "size": 10
             }
         }
     },
@@ -66,7 +66,7 @@ query3 = {
 
 es_url = "http://es717x3:9200/"
 
-i14y_list = ["www.gsa.gov", ]
+i14y_list = []
 
 def query_elasticsearch(search_endpoint, body = ""):
     r = requests.get(
@@ -83,13 +83,16 @@ def generate_list_from_i14y():
     response = json.loads(r.text)
     # print(response)
     # print(response['aggregations']['regex_count']['buckets'])
-    for domain in response['aggregations']['regex_count']['buckets']:
-        print(domain["key"] + " " + str(domain["doc_count"]))
+    # for domain in response['aggregations']['regex_count']['buckets']:
+    #     print(domain["key"] + " " + str(domain["doc_count"]))
     # Iterate over keys:
-    print(str(datetime.datetime.now()) + " Iterating over " + str(len(response['aggregations']['regex_count']['buckets'])) + " domains")
+    domains = ["www.gsa.gov", "www.goarmy.com", "static.e-publishing.af.mil"]
     for domain in response['aggregations']['regex_count']['buckets']:
-        print(domain['key'])
-        payload = json.dumps(query2).replace("THIS_AS_WELL", domain['key']).replace("REPLACE_THIS", "domain_name")
+        domains.append(domain['key'])
+    print(str(datetime.datetime.now()) + " Iterating over " + str(len(domains)) + " domains")
+    for domain in domains: #response['aggregations']['regex_count']['buckets']:
+        print(domain)
+        payload = json.dumps(query2).replace("THIS_AS_WELL", domain).replace("REPLACE_THIS", "domain_name")
         # print(payload)
         es_query_val = json.loads(query_elasticsearch(search_endpoint, payload).text)
         for regex_pattern in es_query_val["aggregations"]["regex_patterns"]["buckets"]:
