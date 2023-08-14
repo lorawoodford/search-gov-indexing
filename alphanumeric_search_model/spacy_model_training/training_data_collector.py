@@ -21,7 +21,7 @@ query1 = {
         "regex_count": {
             "terms": {
                 "field": "REPLACE_THIS.keyword",
-                "size": 10
+                "size": 1000
             }
         }
     },
@@ -66,7 +66,7 @@ query3 = {
 
 es_url = "http://es717x3:9200/"
 
-i14y_list = []
+i14y_list = ["www.gsa.gov", ]
 
 def query_elasticsearch(search_endpoint, body = ""):
     r = requests.get(
@@ -154,8 +154,9 @@ def load_nlp(filename):
 
 generate_list_from_i14y()
 # i14y_list.sort()
-# print(i14y_list)
+print(i14y_list)
 print(len(i14y_list))
+sys.exit(0)
 i14y_list = list(set(i14y_list))
 i14y_list.sort()
 i14y_list = remove_english_words_from_list(i14y_list)
