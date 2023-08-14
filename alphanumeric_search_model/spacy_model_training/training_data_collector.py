@@ -83,6 +83,8 @@ def generate_list_from_i14y():
     response = json.loads(r.text)
     # print(response)
     # print(response['aggregations']['regex_count']['buckets'])
+    for domain in response['aggregations']['regex_count']['buckets']:
+        print(domain["key"] + " " + domain["doc_count"])
     # Iterate over keys:
     print(str(datetime.datetime.now()) + " Iterating over " + str(len(response['aggregations']['regex_count']['buckets'])) + " domains")
     for domain in response['aggregations']['regex_count']['buckets']:
@@ -91,7 +93,7 @@ def generate_list_from_i14y():
         # print(payload)
         es_query_val = json.loads(query_elasticsearch(search_endpoint, payload).text)
         for regex_pattern in es_query_val["aggregations"]["regex_patterns"]["buckets"]:
-            print(str(regex_pattern["value"]) + "\t\t" + regex_pattern["key"])
+            # print(str(regex_pattern["value"]) + "\t\t" + regex_pattern["key"])
             i14y_list.append(regex_pattern["key"])
 
 def get_test_document_from_elasticsearch(query_string):
