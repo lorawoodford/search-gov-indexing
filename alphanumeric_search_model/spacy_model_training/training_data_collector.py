@@ -91,7 +91,7 @@ def generate_list_from_i14y():
         # print(payload)
         es_query_val = json.loads(query_elasticsearch(search_endpoint, payload).text)
         for regex_pattern in es_query_val["aggregations"]["regex_patterns"]["buckets"]:
-            # print(regex_pattern["key"])
+            print(str(regex_pattern["value"]) + "\t\t" + regex_pattern["key"])
             i14y_list.append(regex_pattern["key"])
 
 def get_test_document_from_elasticsearch(query_string):
@@ -154,7 +154,7 @@ def load_nlp(filename):
 
 generate_list_from_i14y()
 # i14y_list.sort()
-print(i14y_list)
+# print(i14y_list)
 print(len(i14y_list))
 sys.exit(0)
 i14y_list = list(set(i14y_list))
