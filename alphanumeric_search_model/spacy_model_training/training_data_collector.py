@@ -218,5 +218,5 @@ TRAINING_DATA = [ele for ele in TRAINING_DATA if ele != []]
 
 print(str(datetime.datetime.now()) + " Finished processing, saving file")
 
-with open ("/mnt/trainingdata/ksummers/training_model_sm/training_data.json", "w", encoding="utf-8") as f:
+with open ("/mnt/trainingdata/ksummers/training_model_sm/training_data_md.json", "w", encoding="utf-8") as f:
     json.dump(TRAINING_DATA, f, indent=4)
