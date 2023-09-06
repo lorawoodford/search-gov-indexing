@@ -21,7 +21,7 @@ query1 = {
         "regex_count": {
             "terms": {
                 "field": "REPLACE_THIS.keyword",
-                "size": 5
+                "size": 10
             }
         }
     },
@@ -33,7 +33,7 @@ query2 = {
         "regex_patterns" : {
             "terms": {
                 "field": "regex_patterns.keyword",
-                "size": 500
+                "size": 1000
             }
         }
     },
@@ -52,7 +52,7 @@ logstash_list = []
 
 distance_touple = []
 
-es_url = "http://localhost:9200/"
+es_url = "http://es717x3:9200/"
 
 def query_elasticsearch(search_endpoint, body = ""):
     r = requests.get(
@@ -65,7 +65,7 @@ def query_elasticsearch(search_endpoint, body = ""):
 def get_levenshtein_distance(word_one, word_two):
     lratio = ratio(word_one, word_two, score_cutoff=0.7)
     if lratio > 0.0:
-        distance_touple.append([word_one, word_two, lratio])
+        distance_touple.append([word_one, word_two, str(lratio)])
 
 def generate_list_from_i14y():
     search_endpoint = "production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search"
@@ -105,4 +105,8 @@ print(len(set(logstash_list)))
 for i14y in set(i14y_list):
     for logstash_word in set(logstash_list):
         get_levenshtein_distance(i14y, logstash_word)
-print(*distance_touple, sep='\n')
+# print(*distance_touple, sep='\n')
+
+with open ("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "w", encoding="utf-8") as f:
+    for line in distance_touple:
+        f.write(",".join(line)+"\n")
