@@ -26,12 +26,12 @@ query = {
                 #         "query": "18th",
                 #         "default_field": "content_en"
                 #     }
-                },
-                {
-                    "query_string": {
-                        "query": "www.e-publishing.af.mil",
-                        "default_field": "domain_name"
-                    }
+                # },
+                # {
+                #     "query_string": {
+                #         "query": "www.e-publishing.af.mil",
+                #         "default_field": "domain_name"
+                #     }
                 }
             ],
             "filter": [
@@ -54,7 +54,7 @@ query = {
         # #     "field": "SOME_FIELD"
         # # }
     },
-    "size" : 5
+    "size" : 5000
 }
 
 parser = argparse.ArgumentParser(
@@ -125,7 +125,7 @@ def process_alphanumeric_document(document):
                 additional_alphanumeric_vals.append(levenshtein_dictionary[token.text])
         # print(token.ent_type_)
         # print(dir(token))
-    additional_alphanumeric_vals = set([item for row in additional_alphanumeric_vals for item in row])
+    additional_alphanumeric_vals = list(set([item for row in additional_alphanumeric_vals for item in row]))
     # print(additional_alphanumeric_vals)
     # sys.exit(0)
     return additional_alphanumeric_vals
@@ -134,7 +134,7 @@ def crawl_es_index(es_url, index, start_date):
     # Do the actual crawling
     # Call scroll
     modified_query = json.dumps(query).replace("SOME_VALUE", start_date).replace("SOME_FIELD", "updated_at")
-    results = create_scroll_elasticsearch(es_url, index, modified_query)
+    results = create_scroll_elasticsearch(es_url, index, modified_query, 60)
     json_result = results.json()
     # print(json_result)
     scroll_id = json_result["_scroll_id"]
@@ -174,13 +174,13 @@ args = parser.parse_args()
 # es_url = args.es_url
 # index = args.index
 
-alphanumeric_spacy = spacy.load("../alpha_numeric_ner_model/")
-levenshtein_dictionary = load_levenshtein_dictionary("../levenshtein_final.csv")
+alphanumeric_spacy = spacy.load("/mnt/trainingdata/ksummers/alpha_numeric_ner_model/")
+levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers/levenshtein_final.csv")
 
 # print(levenshtein_dictionary["18th"])
 # sys.exit(0)
 
-es_url = "http://localhost:9200/"
+es_url = "http://es717x3:9200/"
 index = "production-i14y-documents-searchgov-v6"
 start_date = "2023-01-01"
 
