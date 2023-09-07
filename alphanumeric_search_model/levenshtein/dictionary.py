@@ -8,7 +8,7 @@
 
 levenshtein_dictionary = {}
 
-levenshtein_raw = open("../levenshtein_raw.txt", "r")
+levenshtein_raw = open("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "r")
 
 for line in levenshtein_raw:
     line_split = line.split(",")
@@ -26,7 +26,7 @@ sorted_levenshtein.sort()
 
 # print (sorted_levenshtein)
 
-final_file = open("levenshtein_final.csv", "w", encoding="utf-8")
+final_file = open("/mnt/trainingdata/ksummers/levenshtein_final.csv", "w", encoding="utf-8")
 for key in sorted_levenshtein:
     final_file.write(key + "," + ",".join(levenshtein_dictionary[key]) + "\n")
 
