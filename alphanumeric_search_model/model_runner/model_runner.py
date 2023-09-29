@@ -35,7 +35,85 @@ query = {
                 }
             ],
             "filter": [
-
+                "bool": {
+                    "should" : [
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "static.e-publishing.af.mil"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.e-publishing.af.mil"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.goarmy.com"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.gsa.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.uscis.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.va.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "apps.dtic.mil"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.nrc.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.fs.usda.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.justice.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.sec.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.army.mil"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "founders.archives.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.cdc.gov"
+                            }
+                        },
+                        {
+                            "match_phrase": {
+                                "domain_name.keyword": "www.osha.gov"
+                            }
+                        },
+                    ]
+                }
             ],
             "should": [
 
@@ -133,6 +211,7 @@ def process_alphanumeric_document(document):
 def crawl_es_index(es_url, index, start_date):
     # Do the actual crawling
     # Call scroll
+    num_docs_more_than_3m = 0
     modified_query = json.dumps(query).replace("SOME_VALUE", start_date).replace("SOME_FIELD", "updated_at")
     results = create_scroll_elasticsearch(es_url, index, modified_query, 60)
     json_result = results.json()
@@ -141,6 +220,7 @@ def crawl_es_index(es_url, index, start_date):
     while True:
         # Check that there are documents to process
         if len(json_result["hits"]["hits"]) == 0:
+            print("Number of documents more than 3MB: ", num_docs_more_than_3m)
             break
         
         # Process documents
@@ -148,16 +228,19 @@ def crawl_es_index(es_url, index, start_date):
         for document in json_result["hits"]["hits"]:
             # print(document)
             if "content_en" in document["_source"]:
-                modified_documents.append(
-                    {
-                        "id": document["_id"],
-                        "alphanumeric_vals": process_alphanumeric_document(document["_source"]["content_en"])
-                    }
-                )
+                try:
+                    modified_documents.append(
+                        {
+                            "id": document["_id"],
+                            "alphanumeric_vals": process_alphanumeric_document(document["_source"]["content_en"])
+                        }
+                    )
+                except ValueError as why:
+                    num_docs_more_than_3m = num_docs_more_than_3m + 1
         
         # Write Documents to ES
-        print(modified_documents)
-        sys.exit(0)
+        # print(modified_documents)
+        # sys.exit(0)
         push_to_elasticsearch(es_url, index, modified_documents)
         # Query ElasticSearch
         results = query_elasticsearch(es_url, "_search/scroll",
@@ -175,6 +258,7 @@ args = parser.parse_args()
 # index = args.index
 
 alphanumeric_spacy = spacy.load("/mnt/trainingdata/ksummers/alpha_numeric_ner_model/")
+alphanumeric_spacy.max_length = 3000000
 levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers/levenshtein_final.csv")
 
 # print(levenshtein_dictionary["18th"])
