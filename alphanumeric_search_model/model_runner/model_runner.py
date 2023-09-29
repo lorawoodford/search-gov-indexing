@@ -35,84 +35,86 @@ query = {
                 }
             ],
             "filter": [
-                "bool": {
-                    "should" : [
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "static.e-publishing.af.mil"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.e-publishing.af.mil"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.goarmy.com"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.gsa.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.uscis.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.va.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "apps.dtic.mil"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.nrc.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.fs.usda.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.justice.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.sec.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.army.mil"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "founders.archives.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.cdc.gov"
-                            }
-                        },
-                        {
-                            "match_phrase": {
-                                "domain_name.keyword": "www.osha.gov"
-                            }
-                        },
-                    ]
+                {
+                    "bool": {
+                        "should" : [
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "static.e-publishing.af.mil"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.e-publishing.af.mil"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.goarmy.com"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.gsa.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.uscis.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.va.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "apps.dtic.mil"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.nrc.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.fs.usda.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.justice.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.sec.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.army.mil"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "founders.archives.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.cdc.gov"
+                                }
+                            },
+                            {
+                                "match_phrase": {
+                                    "domain_name.keyword": "www.osha.gov"
+                                }
+                            },
+                        ]
+                    }
                 }
             ],
             "should": [
