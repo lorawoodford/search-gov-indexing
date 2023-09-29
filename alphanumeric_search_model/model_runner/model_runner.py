@@ -40,77 +40,77 @@ query = {
                         "should" : [
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "static.e-publishing.af.mil"
+                                    "domain_name": "static.e-publishing.af.mil"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.e-publishing.af.mil"
+                                    "domain_name": "www.e-publishing.af.mil"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.goarmy.com"
+                                    "domain_name": "www.goarmy.com"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.gsa.gov"
+                                    "domain_name": "www.gsa.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.uscis.gov"
+                                    "domain_name": "www.uscis.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.va.gov"
+                                    "domain_name": "www.va.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "apps.dtic.mil"
+                                    "domain_name": "apps.dtic.mil"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.nrc.gov"
+                                    "domain_name": "www.nrc.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.fs.usda.gov"
+                                    "domain_name": "www.fs.usda.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.justice.gov"
+                                    "domain_name": "www.justice.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.sec.gov"
+                                    "domain_name": "www.sec.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.army.mil"
+                                    "domain_name": "www.army.mil"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "founders.archives.gov"
+                                    "domain_name": "founders.archives.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.cdc.gov"
+                                    "domain_name": "www.cdc.gov"
                                 }
                             },
                             {
                                 "match_phrase": {
-                                    "domain_name.keyword": "www.osha.gov"
+                                    "domain_name": "www.osha.gov"
                                 }
                             },
                         ]
