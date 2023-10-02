@@ -134,7 +134,7 @@ query = {
         # #     "field": "SOME_FIELD"
         # # }
     },
-    "size" : 5000
+    "size" : 1000
 }
 
 parser = argparse.ArgumentParser(
