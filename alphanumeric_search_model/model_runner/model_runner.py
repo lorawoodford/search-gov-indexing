@@ -36,80 +36,85 @@ query = {
             ],
             "filter": [
                 {
+                    "exists": {
+                        "field": "content_en"
+                    }
+                },
+                {
                     "bool": {
                         "should" : [
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "static.e-publishing.af.mil"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.e-publishing.af.mil"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.goarmy.com"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.gsa.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.uscis.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.va.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "apps.dtic.mil"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.nrc.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.fs.usda.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.justice.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.sec.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.army.mil"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "founders.archives.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.cdc.gov"
                                 }
                             },
                             {
-                                "match_phrase": {
+                                "term": {
                                     "domain_name": "www.osha.gov"
                                 }
                             },
@@ -153,7 +158,7 @@ parser = argparse.ArgumentParser(
 
 def query_elasticsearch(url, search_endpoint, request = ""):
     # Make Request to ElasticSearch
-    print(request)
+    print(str(datetime.datetime.now()),"\t",request)
     r = requests.get(
         url + search_endpoint,
         headers = {"Content-Type": "application/json"},
@@ -229,6 +234,7 @@ def crawl_es_index(es_url, index, start_date):
         modified_documents = []
         for document in json_result["hits"]["hits"]:
             # print(document)
+            print(document["_id"])
             if "content_en" in document["_source"]:
                 try:
                     modified_documents.append(
