@@ -180,8 +180,8 @@ def push_to_elasticsearch(url, index, documents):
     # Use Partial document update to push to ElasticSearch
     es_payload = []
     for document in documents:
-        es_payload.append(json.dumps({"index" : {"_index": index, "_id": document["id"]}}))
-        es_payload.append(json.dumps({"doc": {"alphanumeric_values": document["alphanumeric_vals"]}}))
+        es_payload.append(json.dumps({"update" : {"_index": index, "_id": document["id"]}}))
+        es_payload.append(json.dumps({"alphanumeric_values": document["alphanumeric_vals"]}))
     requests.post(
         url + index + "/_bulk",
         headers = {"Content-Type": "application/json"},
