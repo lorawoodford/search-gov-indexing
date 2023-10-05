@@ -8,6 +8,7 @@ import spacy
 import json
 import requests
 import sys
+import datetime
 
 query = {
     "query" : {
@@ -243,6 +244,7 @@ def crawl_es_index(es_url, index, start_date):
                             "alphanumeric_vals": process_alphanumeric_document(document["_source"]["content_en"])
                         }
                     )
+                    print(len(modified_documents[-1]["alphanumeric_vals"]))
                 except ValueError as why:
                     num_docs_more_than_3m = num_docs_more_than_3m + 1
         
