@@ -182,11 +182,12 @@ def push_to_elasticsearch(url, index, documents):
     for document in documents:
         es_payload.append(json.dumps({"update" : {"_index": index, "_id": document["id"]}}))
         es_payload.append(json.dumps({"doc" : {"alphanumeric_values": document["alphanumeric_vals"]}}))
-    requests.post(
+    tmp = requests.post(
         url + "/_bulk",
         headers = {"Content-Type": "application/json"},
         data="\n".join(es_payload)
     )
+    print(tmp.json)
 
 def load_levenshtein_dictionary(file_name):
     levenshtein_dictionary = {}
