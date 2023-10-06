@@ -185,9 +185,8 @@ def push_to_elasticsearch(url, index, documents):
     tmp = requests.post(
         url + "/_bulk",
         headers = {"Content-Type": "application/json"},
-        data="\n".join(es_payload)
+        data="\n".join(es_payload) + "\n"
     )
-    print(tmp.json)
 
 def load_levenshtein_dictionary(file_name):
     levenshtein_dictionary = {}
