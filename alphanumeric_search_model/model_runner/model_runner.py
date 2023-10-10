@@ -235,7 +235,7 @@ def crawl_es_index(es_url, index, start_date):
         modified_documents = []
         for document in json_result["hits"]["hits"]:
             # print(document)
-            print(document["_id"])
+            # print(document["_id"])
             if "content_en" in document["_source"]:
                 try:
                     modified_documents.append(
@@ -244,7 +244,7 @@ def crawl_es_index(es_url, index, start_date):
                             "alphanumeric_vals": process_alphanumeric_document(document["_source"]["content_en"])
                         }
                     )
-                    print(len(modified_documents[-1]["alphanumeric_vals"]))
+                    # print(len(modified_documents[-1]["alphanumeric_vals"]))
                 except ValueError as why:
                     num_docs_more_than_3m = num_docs_more_than_3m + 1
         
