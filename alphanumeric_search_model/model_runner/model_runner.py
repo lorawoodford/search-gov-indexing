@@ -268,7 +268,7 @@ args = parser.parse_args()
 # index = args.index
 
 alphanumeric_spacy = spacy.load("/mnt/trainingdata/ksummers/alpha_numeric_ner_model/")
-alphanumeric_spacy.max_length = 3000000
+alphanumeric_spacy.max_length = 1500000
 levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers/levenshtein_final.csv")
 
 # print(levenshtein_dictionary["18th"])
