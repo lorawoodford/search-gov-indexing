@@ -13,7 +13,7 @@ query = {
             "_score" :{ "order" : "desc"}
         }
     ],
-    "size" : 20,
+    "size" : 1000,
     "query" : {
         "bool" :{
             "filter": [
@@ -110,10 +110,10 @@ query = {
 
 indices = {
     "production-i14y-documents-searchgov-v6-reindex_keyword" : [
-        # "title_en.raw",
-        # "title_en.raw.keyword",
+        "title_en.raw",
+        "title_en.raw.keyword",
         "content_en.raw",
-        # "content_en.raw.keyword"
+        "content_en.raw.keyword"
     ],
     # "human_logstash-*": [
     #     "params.query.raw"
@@ -121,11 +121,11 @@ indices = {
 }
 
 es_urls = [
-    "http://localhost:9200"
-    # "http://es717x1:9200",
-    # "http://es717x2:9200",
-    # "http://es717x3:9200",
-    # "http://es717x4:9200",
+    # "http://localhost:9200"
+    "http://es717x1:9200",
+    "http://es717x2:9200",
+    "http://es717x3:9200",
+    "http://es717x4:9200",
 ]
 
 regex_expressions = [
@@ -204,26 +204,26 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern):
         return
 
     scroll_id = json_result["_scroll_id"]
-    # while True:
-        # if len(json_result["hits"]["hits"]) == 0:
-        #    break
+    while True:
+        if len(json_result["hits"]["hits"]) == 0:
+           break
         
-    temp_doc_list = []
+        temp_doc_list = []
 
-    for document in json_result["hits"]["hits"]:
-        scan_field = field.replace(".raw", "").replace(".keyword", "")
-        temp_doc_list.append(create_i14y_doc(document, regex_pattern, scan_field))
-    
-    response = push_to_elasticsearch(es_url[es_node], index + "_regex_py", temp_doc_list)
-    if(response.status_code == 400):
-        print(response.json())
-        return
+        for document in json_result["hits"]["hits"]:
+            scan_field = field.replace(".raw", "").replace(".keyword", "")
+            temp_doc_list.append(create_i14y_doc(document, regex_pattern, scan_field))
         
-    results = query_elasticsearch(es_url[es_node], "/_search/scroll", {
-        "scroll" : "10m",
-        "scroll_id": scroll_id
-    })
-    es_node = (es_node + 1) % len(es_urls)
+        response = push_to_elasticsearch(es_url[es_node], index + "_regex_py", temp_doc_list)
+        if(response.status_code == 400):
+            print(response.json())
+            # return
+            
+        results = query_elasticsearch(es_url[es_node], "/_search/scroll", {
+            "scroll" : "10m",
+            "scroll_id": scroll_id
+        })
+        es_node = (es_node + 1) % len(es_urls)
     # return
 
 for index in list(indices.keys()):
