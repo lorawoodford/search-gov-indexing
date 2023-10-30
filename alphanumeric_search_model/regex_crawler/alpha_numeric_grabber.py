@@ -240,5 +240,5 @@ for index in list(indices.keys()):
             del count_query["sort"]
             del count_query["size"]
             modified_query = json.dumps(count_query).replace("SOME_REGEX_PATTERN", regexp).replace("SOME_IMPORTANT_FIELD", field)
-            result = query_elasticsearch("http://localhost:9200", "/" + index + "/_count", modified_query)
+            result = query_elasticsearch(es_urls[0], "/" + index + "/_count", modified_query)
             crawl_es_index_with_field(es_urls, index, field, regexp, result.json()["count"])
