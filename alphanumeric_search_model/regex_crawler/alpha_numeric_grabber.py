@@ -191,10 +191,11 @@ def create_i14y_doc(doc, regex, field):
     }
     # return
 
-def crawl_es_index_with_field(es_url, index, field, regex_pattern):
+def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0):
     modified_query = json.dumps(query).replace("SOME_REGEX_PATTERN", regex_pattern).replace("SOME_IMPORTANT_FIELD", field)
     results = create_scroll_elasticsearch(es_url[0], index, modified_query, 60)
     json_result = results.json()
+    docs_processed = 0
     es_node = 0
 
     # print(json_result)
@@ -205,14 +206,19 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern):
 
     scroll_id = json_result["_scroll_id"]
     while True:
+        print(doc_count, "\t", docs_processed, "\t", (doc_count - docs_processed))
         if len(json_result["hits"]["hits"]) == 0:
            break
+        
+        if doc_count - docs_processed < 0:
+            break
         
         temp_doc_list = []
 
         for document in json_result["hits"]["hits"]:
             scan_field = field.replace(".raw", "").replace(".keyword", "")
             temp_doc_list.append(create_i14y_doc(document, regex_pattern, scan_field))
+            docs_processed = docs_processed + 1
         
         response = push_to_elasticsearch(es_url[es_node], index + "_regex_py", temp_doc_list)
         if(response.status_code == 400):
@@ -229,5 +235,10 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern):
 for index in list(indices.keys()):
     for field in indices[index]:
         for regexp in regex_expressions:
-            print(" ****************** ", regexp, " ****************** ")
-            crawl_es_index_with_field(es_urls, index, field, regexp)
+            print(" ****************** ", field, ": ", regexp, " ****************** ")
+            count_query = query.copy()
+            del count_query["sort"]
+            del count_query["size"]
+            modified_query = json.dumps(count_query).replace("SOME_REGEX_PATTERN", regexp).replace("SOME_IMPORTANT_FIELD", field)
+            result = query_elasticsearch("http://localhost:9200", "/" + index + "/_count", modified_query)
+            crawl_es_index_with_field(es_urls, index, field, regexp, result.json()["count"])
