@@ -20,8 +20,8 @@ query1 = {
     "aggs": {
         "regex_count": {
             "terms": {
-                "field": "REPLACE_THIS.keyword",
-                "size": 10
+                "field": "doc.REPLACE_THIS.keyword",
+                "size": 20
             }
         }
     },
@@ -32,7 +32,7 @@ query2 = {
     "aggs": {
         "regex_patterns" : {
             "terms": {
-                "field": "regex_patterns.keyword",
+                "field": "doc.regex_patterns.keyword",
                 "size": 500
             }
         }
@@ -42,7 +42,7 @@ query2 = {
             "filter": [
                 {
                     "term": {
-                        "REPLACE_THIS.keyword": {
+                        "doc.REPLACE_THIS.keyword": {
                             "value": "THIS_AS_WELL"
                         }
                     }
@@ -78,7 +78,7 @@ def query_elasticsearch(search_endpoint, body = ""):
 
 def generate_list_from_i14y():
     print(str(datetime.datetime.now()) + " Collecting list of Search Gov Alpha Numeric Strings")    
-    search_endpoint = "production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search"
+    search_endpoint = "test_index/_search"
     r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "domain_name"))
     response = json.loads(r.text)
     # print(response)
