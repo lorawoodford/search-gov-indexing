@@ -20,7 +20,7 @@ query1 = {
     "aggs": {
         "regex_count": {
             "terms": {
-                "field": "doc.REPLACE_THIS.keyword",
+                "field": "doc.REPLACE_THIS",
                 "size": 20
             }
         }
@@ -32,7 +32,7 @@ query2 = {
     "aggs": {
         "regex_patterns" : {
             "terms": {
-                "field": "doc.regex_patterns.keyword",
+                "field": "doc.regex_patterns",
                 "size": 500
             }
         }
@@ -42,7 +42,7 @@ query2 = {
             "filter": [
                 {
                     "term": {
-                        "doc.REPLACE_THIS.keyword": {
+                        "doc.REPLACE_THIS": {
                             "value": "THIS_AS_WELL"
                         }
                     }
