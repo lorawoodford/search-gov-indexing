@@ -121,11 +121,11 @@ indices = {
 }
 
 es_urls = [
-    "http://localhost:9200"
-    # "http://es717x1:9200",
-    # "http://es717x2:9200",
-    # "http://es717x3:9200",
-    # "http://es717x4:9200",
+    # "http://localhost:9200"
+    "http://es717x1:9200",
+    "http://es717x2:9200",
+    "http://es717x3:9200",
+    "http://es717x4:9200",
 ]
 
 regex_expressions = [
