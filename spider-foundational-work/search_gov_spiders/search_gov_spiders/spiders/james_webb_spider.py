@@ -8,8 +8,7 @@ class JamesWebbSpiderSpider(CrawlSpider):
     allowed_domains = ["jwst.nasa.gov"]
     start_urls = ["https://www.jwst.nasa.gov/"]
 
-    
-    rules = (Rule(LinkExtractor(allow = (), unique = True), callback="parse_item", follow=True),)
+    rules = (Rule(LinkExtractor(allow=(), deny=["calendar", "location-contact"], unique=True), callback="parse_item", follow=True),)
 
     def parse_item(self, response):
         yield {

@@ -7,17 +7,17 @@ import pandas as pd
 
 # to run, enter at the prompt: `python3 comparison.py`
 
-suf = '/scrapy_urls' # suf is short for scrapy_urls_folder 
-scUf = '/scrutiny_urls/processed' # scUf is short for scrutiny_urls_folder
+scrapy_urls_folder = '/scrapy_urls' # suf is short for scrapy_urls_folder
+scrutiny_urls_folder = '/scrutiny_urls/processed' # scUf is short for scrutiny_urls_folder
 
-scrapy_paths = [suf + '/armymwr_urls.csv', 
-               suf + '/james_webb_urls.csv',
-               suf + '/travel_dod_mil_urls.csv',
-               suf + '/veteran_affair_urls.csv']
-scrutiny_paths = [scUf + '/armymwr.txt', 
-                scUf + '/james_webb.txt',
-                scUf + '/travel_dod_mil.txt',
-                scUf + '/veteran_affairs.txt']
+scrapy_paths = [scrapy_urls_folder + '/armymwr_urls.csv',
+                scrapy_urls_folder + '/james_webb_urls.csv',
+                scrapy_urls_folder + '/travel_dod_mil_urls.csv',
+                scrapy_urls_folder + '/veteran_affair_urls.csv']
+scrutiny_paths = [scrutiny_urls_folder + '/armymwr.txt',
+                  scrutiny_urls_folder + '/james_webb.txt',
+                  scrutiny_urls_folder + '/travel_dod_mil.txt',
+                  scrutiny_urls_folder + '/veteran_affairs.txt']
 text_gaps = ['armymwr',
              'james webb',
              'travel.dod.mil',
