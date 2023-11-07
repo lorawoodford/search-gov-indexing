@@ -16,10 +16,22 @@ query = {
     "size" : 1000,
     "query" : {
         "bool" :{
+            "must" : [
+                # {
+                #     "match": {
+                #         "title_en": {
+                #             "query": "DD 214*"
+                #         }
+                #     }
+                # },
+            ],
             "filter": [
                 {
                     "regexp": {
-                        "SOME_IMPORTANT_FIELD": "SOME_REGEX_PATTERN"
+                        "SOME_IMPORTANT_FIELD": {
+                            "value": "SOME_REGEX_PATTERN",
+                            "case_insensitive": True
+                        }
                     }
                 },
                 {
@@ -128,30 +140,126 @@ es_urls = [
     "http://es717x4:9200",
 ]
 
+# Although Python will do case insensitive searching for regex patterns, ES 7.17 doesn't appear to 
+# do searching with case insensitivity enabled.
 regex_expressions = [
-    "[0-9]+([a-z]+|[A-Z]+)",
-    "([a-z]+|[A-Z]+)[0-9]+",
-    "(([a-z]+|[A-Z]+)[0-9]*-([a-z]+|[A-Z]+)[0-9]*)",
-    "(([a-z]+|[A-Z]+)[0-9]*-[0-9]+([a-z]*|[A-Z]*))",
-    "([0-9]+([a-z]*|[A-Z]*)-([a-z]+|[A-Z]+)[0-9]*)",
-    "([0-9]+([a-z]*|[A-Z]*)-[0-9]+([a-z]+|[A-Z]+))",
-    # "([a-z]+[0-9]*§[a-z]+[0-9]*)",
-    # "([a-z]+[0-9]*§[0-9]+[a-z]*)",
-    # "([0-9]+[a-z]*§[a-z]+[0-9]*)",
-    # "([0-9]+[a-z]*§[0-9]+[a-z]*)",
-    # "([a-z]+[0-9]*.[a-z]+[0-9]*)",
-    "(([a-z]+|[A-Z]+)[0-9]*\\\.([a-z]+|[A-Z]+)[0-9]+)",
-    "(([a-z]+|[A-Z]+)[0-9]+\\\.([a-z]+|[A-Z]+)[0-9]*)",
-    "(([a-z]+|[A-Z]+)[0-9]+\\\.([a-z]+|[A-Z]+)[0-9]+)",
-    "(([a-z]+|[A-Z]+)[0-9]*\\\.[0-9]+([a-z]*|[A-Z]*))",
-    "([0-9]+([a-z]*|[A-Z]*)\\\.([a-z]+|[A-Z]+)[0-9]*)",
-    "([0-9]+([a-z]*|[A-Z]*)\\\.[0-9]+([a-z]*|[A-Z]*))",
-    "(([a-z]+|[A-Z]+)[0-9]*\\\s([a-z]+|[A-Z]+)[0-9]+)",
-    "(([a-z]+|[A-Z]+)[0-9]+\\\s([a-z]+|[A-Z]+)[0-9]*)",
-    "(([a-z]+|[A-Z]+)[0-9]*\\\s[0-9]+([a-z]*|[A-Z]*))",
-    "([0-9]+([a-z]*|[A-Z]*)\\\s([a-z]+|[A-Z]+)[0-9]*)",
-    "([0-9]+([a-z]+|[A-Z]+)\\\s[0-9]+([a-z]*|[A-Z]*))",
-    "([0-9]+([a-z]*|[A-Z]*)\\\s[0-9]+([a-z]+|[A-Z]+))",
+    "[0-9]+[a-z]+",
+    "[0-9]+[A-Z]+",
+
+    "[a-z]+[0-9]+",
+    "[A-Z]+[0-9]+",
+
+    "[a-z]+[0-9]+-[a-z]+[0-9]*",
+    "[A-Z]+[0-9]+-[a-z]+[0-9]*",
+    "[a-z]+[0-9]+-[A-Z]+[0-9]*",
+    "[A-Z]+[0-9]+-[A-Z]+[0-9]*",
+
+    "[a-z]+[0-9]*-[a-z]+[0-9]+",
+    "[A-Z]+[0-9]*-[a-z]+[0-9]+",
+    "[a-z]+[0-9]*-[A-Z]+[0-9]+",
+    "[A-Z]+[0-9]*-[A-Z]+[0-9]+",
+
+    "[a-z]+[0-9]+-[0-9]+[a-z]*",
+    "[a-z]+[0-9]+-[0-9]+[A-Z]*",
+    "[A-Z]+[0-9]+-[0-9]+[a-z]*",
+    "[A-Z]+[0-9]+-[0-9]+[A-Z]*",
+    
+    "[a-z]+[0-9]*-[0-9]+[a-z]+",
+    "[a-z]+[0-9]*-[0-9]+[A-Z]+",
+    "[A-Z]+[0-9]*-[0-9]+[a-z]+",
+    "[A-Z]+[0-9]*-[0-9]+[A-Z]+",
+
+    "[0-9]+[a-z]+-[a-z]+[0-9]*",
+    "[0-9]+[A-Z]+-[a-z]+[0-9]*",
+    "[0-9]+[a-z]+-[A-Z]+[0-9]*",
+    "[0-9]+[A-Z]+-[A-Z]+[0-9]*",
+
+    "[0-9]+[a-z]*-[a-z]+[0-9]+",
+    "[0-9]+[A-Z]*-[a-z]+[0-9]+",
+    "[0-9]+[a-z]*-[A-Z]+[0-9]+",
+    "[0-9]+[A-Z]*-[A-Z]+[0-9]+",
+
+    "[0-9]+[a-z]*-[0-9]+[a-z]+",
+    "[0-9]+[A-Z]*-[0-9]+[a-z]+",
+    "[0-9]+[a-z]*-[0-9]+[A-Z]+",
+    "[0-9]+[A-Z]*-[0-9]+[A-Z]+",
+
+    "[0-9]+[a-z]+-[0-9]+[a-z]*",
+    "[0-9]+[A-Z]+-[0-9]+[a-z]*",
+    "[0-9]+[a-z]+-[0-9]+[A-Z]*",
+    "[0-9]+[A-Z]+-[0-9]+[A-Z]*",
+
+    # Sections, leaving this disabled for now
+    # # "([a-z]+[0-9]*§[a-z]+[0-9]*)",
+    # # "([a-z]+[0-9]*§[0-9]+[a-z]*)",
+    # # "([0-9]+[a-z]*§[a-z]+[0-9]*)",
+    # # "([0-9]+[a-z]*§[0-9]+[a-z]*)",
+    # # "([a-z]+[0-9]*.[a-z]+[0-9]*)",
+
+    "[a-z]+[0-9]*\\\.[a-z]+[0-9]+",
+    "[A-Z]+[0-9]*\\\.[a-z]+[0-9]+",
+    "[a-z]+[0-9]*\\\.[A-Z]+[0-9]+",
+    "[A-Z]+[0-9]*\\\.[A-Z]+[0-9]+",
+
+    "[a-z]+[0-9]+\\\.[a-z]+[0-9]*",
+    "[A-Z]+[0-9]+\\\.[a-z]+[0-9]*",
+    "[a-z]+[0-9]+\\\.[A-Z]+[0-9]*",
+    "[A-Z]+[0-9]+\\\.[A-Z]+[0-9]*",
+
+    "[a-z]+[0-9]+\\\.[a-z]+[0-9]+",
+    "[A-Z]+[0-9]+\\\.[a-z]+[0-9]+",
+    "[a-z]+[0-9]+\\\.[A-Z]+[0-9]+",
+    "[A-Z]+[0-9]+\\\.[A-Z]+[0-9]+",
+
+    "[a-z]+[0-9]*\\\.[0-9]+[a-z]*",
+    "[a-z]+[0-9]*\\\.[0-9]+[A-Z]*",
+    "[A-Z]+[0-9]*\\\.[0-9]+[a-z]*",
+    "[A-Z]+[0-9]*\\\.[0-9]+[A-Z]*",
+
+    "[0-9]+[a-z]*\\\.[a-z]+[0-9]*",
+    "[0-9]+[A-Z]*\\\.[a-z]+[0-9]*",
+    "[0-9]+[a-z]*\\\.[A-Z]+[0-9]*",
+    "[0-9]+[A-Z]*\\\.[A-Z]+[0-9]*",
+
+    "[0-9]+[a-z]*\\\.[0-9]+[a-z]+",
+    "[0-9]+[A-Z]*\\\.[0-9]+[a-z]+",
+    "[0-9]+[a-z]*\\\.[0-9]+[A-Z]+",
+    "[0-9]+[A-Z]*\\\.[0-9]+[A-Z]+",
+    
+    "[0-9]+[a-z]+\\\.[0-9]+[a-z]*",
+    "[0-9]+[A-Z]+\\\.[0-9]+[a-z]*",
+    "[0-9]+[a-z]+\\\.[0-9]+[A-Z]*",
+    "[0-9]+[A-Z]+\\\.[0-9]+[A-Z]*",
+        
+    "[a-z]+[0-9]*\\\s[a-z]+[0-9]+",
+    "[A-Z]+[0-9]*\\\s[a-z]+[0-9]+",
+    "[a-z]+[0-9]*\\\s[A-Z]+[0-9]+",
+    "[A-Z]+[0-9]*\\\s[A-Z]+[0-9]+",
+
+    "[a-z]+[0-9]+\\\s[a-z]+[0-9]*",
+    "[A-Z]+[0-9]+\\\s[a-z]+[0-9]*",
+    "[a-z]+[0-9]+\\\s[A-Z]+[0-9]*",
+    "[A-Z]+[0-9]+\\\s[A-Z]+[0-9]*",
+
+    "[a-z]+[0-9]*\\\s[0-9]+[a-z]*",
+    "[A-Z]+[0-9]* [0-9]+[a-z]*",
+    "[a-z]+[0-9]*\\\s[0-9]+[A-Z]*",
+    "[A-Z]+[0-9]*\\\s[0-9]+[A-Z]*",
+
+    "[0-9]+[a-z]*\\\s[a-z]+[0-9]*",
+    "[0-9]+[A-Z]*\\\s[a-z]+[0-9]*",
+    "[0-9]+[a-z]*\\\s[A-Z]+[0-9]*",
+    "[0-9]+[A-Z]*\\\s[A-Z]+[0-9]*",
+
+    "[0-9]+[a-z]+\\\s[0-9]+[a-z]*",
+    "[0-9]+[A-Z]+\\\s[0-9]+[a-z]*",
+    "[0-9]+[a-z]+\\\s[0-9]+[A-Z]*",
+    "[0-9]+[A-Z]+\\\s[0-9]+[A-Z]*",
+
+    "[0-9]+[a-z]*\\\s[0-9]+[a-z]+",
+    "[0-9]+[a-z]*\\\s[0-9]+[a-z]+",
+    "[0-9]+[a-z]*\\\s[0-9]+[a-z]+",
+    "[0-9]+[a-z]*\\\s[0-9]+[a-z]+",
 ]
 
 def query_elasticsearch(es_url, search_endpoint, body = ""):
@@ -183,11 +291,11 @@ def push_to_elasticsearch(url, index, documents):
     return tmp
 
 def create_i14y_doc(doc, regex, field):
-    # print(doc)
+    # print(regex, "\t", doc["_source"][field])
     # print(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))
     return {
         "domain_name" : doc["_source"]["domain_name"],
-        "regex_patterns" : re.findall(regex.replace("\\\\", "\\"), doc["_source"][field])
+        "regex_patterns" : re.findall(regex.replace("\\\\", "\\"), doc["_source"][field], re.IGNORECASE)
     }
     # return
 
@@ -195,7 +303,7 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0
     modified_query = json.dumps(query).replace("SOME_REGEX_PATTERN", regex_pattern).replace("SOME_IMPORTANT_FIELD", field)
     results = create_scroll_elasticsearch(es_url[0], index, modified_query, 60)
     json_result = results.json()
-    docs_processed = 0
+    # docs_processed = 0
     es_node = 0
 
     # print(json_result)
@@ -210,25 +318,30 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0
         if len(json_result["hits"]["hits"]) == 0:
            break
         
-        if doc_count - docs_processed < 0:
-            break
+        # if docs_processed > 20:
+        #     break
         
         temp_doc_list = []
+
+        # print(temp_doc_list)
 
         for document in json_result["hits"]["hits"]:
             scan_field = field.replace(".raw", "").replace(".keyword", "")
             temp_doc_list.append(create_i14y_doc(document, regex_pattern, scan_field))
-            docs_processed = docs_processed + 1
+            # docs_processed = docs_processed + 1
         
+        # print(temp_doc_list)
+
         response = push_to_elasticsearch(es_url[es_node], index + "_regex_py", temp_doc_list)
         if(response.status_code == 400):
             print(response.json())
             # return
             
-        results = query_elasticsearch(es_url[es_node], "/_search/scroll", {
+        results = query_elasticsearch(es_url[es_node], "/_search/scroll", json.dumps({
             "scroll" : "10m",
             "scroll_id": scroll_id
-        })
+        }))
+        json_result = results.json()
         es_node = (es_node + 1) % len(es_urls)
     # return
 
