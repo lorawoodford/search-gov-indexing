@@ -162,7 +162,7 @@ if __name__ == "__main__":
     # i14y_list.sort()
     # print(i14y_list)
     print(len(i14y_list))
-    sys.exit(0)
+    # sys.exit(0)
     i14y_list = list(set(i14y_list))
     i14y_list.sort()
     i14y_list = remove_english_words_from_list(i14y_list)
@@ -219,5 +219,5 @@ if __name__ == "__main__":
 
     print(str(datetime.datetime.now()) + " Finished processing, saving file")
 
-    with open ("/mnt/trainingdata/ksummers/training_model_sm/training_data_md.json", "w", encoding="utf-8") as f:
+    with open ("/mnt/trainingdata/ksummers/training_model_2023_Nov/training_data_md.json", "w", encoding="utf-8") as f:
         json.dump(TRAINING_DATA, f, indent=4)
