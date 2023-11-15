@@ -1,3 +1,4 @@
 requests
 spacy
 argparse
+memory_profiler

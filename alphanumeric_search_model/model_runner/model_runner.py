@@ -9,6 +9,8 @@ import json
 import requests
 import sys
 import datetime
+import memory_profiler
+from memory_profiler import profile
 
 query = {
     "query" : {
@@ -216,6 +218,7 @@ def process_alphanumeric_document(document):
     # sys.exit(0)
     return additional_alphanumeric_vals
 
+@profile
 def crawl_es_index(es_url, index, start_date):
     # Do the actual crawling
     # Call scroll
