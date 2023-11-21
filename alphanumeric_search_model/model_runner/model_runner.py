@@ -9,7 +9,9 @@ import json
 import requests
 import sys
 import datetime
+import signal
 import memory_profiler
+from guppy import hpy
 from memory_profiler import profile
 
 query = {
@@ -150,6 +152,8 @@ parser = argparse.ArgumentParser(
     description = "What this script does"
 )
 
+h = hpy()
+
 # parser.add_argument("-s", "--start_date", required=True, help="Date and time to from which to start processing documents MM-DD-YYYY HH:mm")
 # parser.add_argument("-e", "--es_url", required=True, help="The URL of ElasticSearch, should also contain the port")
 # parser.add_argument("-i", "--index", required=True, help="The Index to Crawl inside of ElasticSearch")
@@ -218,6 +222,7 @@ def process_alphanumeric_document(document):
     # sys.exit(0)
     return additional_alphanumeric_vals
 
+
 @profile
 def crawl_es_index(es_url, index, start_date):
     # Do the actual crawling
@@ -226,43 +231,62 @@ def crawl_es_index(es_url, index, start_date):
     modified_query = json.dumps(query).replace("SOME_VALUE", start_date).replace("SOME_FIELD", "updated_at")
     results = create_scroll_elasticsearch(es_url, index, modified_query, 60)
     json_result = results.json()
+    num_runs = 0
     # print(json_result)
     scroll_id = json_result["_scroll_id"]
-    while True:
-        # Check that there are documents to process
-        if len(json_result["hits"]["hits"]) == 0:
-            print("Number of documents more than 3MB: ", num_docs_more_than_3m)
-            break
-        
-        # Process documents
-        modified_documents = []
-        for document in json_result["hits"]["hits"]:
-            # print(document)
-            # print(document["_id"])
-            if "content_en" in document["_source"]:
-                try:
-                    modified_documents.append(
-                        {
-                            "id": document["_id"],
-                            "alphanumeric_vals": process_alphanumeric_document(document["_source"]["content_en"])
-                        }
-                    )
-                    # print(len(modified_documents[-1]["alphanumeric_vals"]))
-                except ValueError as why:
-                    num_docs_more_than_3m = num_docs_more_than_3m + 1
-        
-        # Write Documents to ES
-        # print(modified_documents)
-        # sys.exit(0)
-        push_to_elasticsearch(es_url, index, modified_documents)
-        # Query ElasticSearch
-        results = query_elasticsearch(es_url, "_search/scroll",
-            json.dumps({
-                "scroll": "10m",
-                "scroll_id": scroll_id
-            })
-        )
-        json_result = results.json()
+    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    str_current_datetime = str(current_datetime)
+    file_name = "/mnt/trainingdata/ksummers/heap_usage_" + str_current_datetime + ".txt"
+    file = open(file_name, 'w')
+    try:
+        while True:
+            # Check that there are documents to process
+            if len(json_result["hits"]["hits"]) == 0:
+                print("Number of documents more than 3MB: ", num_docs_more_than_3m)
+                break
+
+            if num_runs == 10:
+                num_runs = 0
+                file.write(str(datetime.datetime.now()))
+                file.write(str("\n"))
+                print(h.heap())
+                file.write(str(h.heap()))
+                file.write(str("\n"))
+            
+            # Process documents
+            modified_documents = []
+            for document in json_result["hits"]["hits"]:
+                # print(document)
+                # print(document["_id"])
+                if "content_en" in document["_source"]:
+                    try:
+                        doc = {
+                                "id": document["_id"],
+                                "alphanumeric_vals": process_alphanumeric_document(document["_source"]["content_en"])
+                            }
+                        modified_documents.append(doc)
+                        # print(len(modified_documents[-1]["alphanumeric_vals"]))
+                    except ValueError as why:
+                        num_docs_more_than_3m = num_docs_more_than_3m + 1
+            
+            # Write Documents to ES
+            # print(modified_documents)
+            # sys.exit(0)
+            push_to_elasticsearch(es_url, index, modified_documents)
+            modified_documents = None
+            # Query ElasticSearch
+            results = query_elasticsearch(es_url, "_search/scroll",
+                json.dumps({
+                    "scroll": "10m",
+                    "scroll_id": scroll_id
+                })
+            )
+            json_result = None
+            json_result = results.json()
+            num_runs = num_runs + 1
+    except KeyboardInterrupt:
+        print("Exiting")
+    file.close()
 
 # Setup Process
 args = parser.parse_args()
@@ -270,6 +294,8 @@ args = parser.parse_args()
 # es_url = args.es_url
 # index = args.index
 
+# alphanumeric_spacy = spacy.load("../spacy_model_training/alpha_numeric_ner_model/")
+# levenshtein_dictionary = load_levenshtein_dictionary("../levenshtein_final.csv")
 alphanumeric_spacy = spacy.load("/mnt/trainingdata/ksummers/alpha_numeric_ner_model/")
 alphanumeric_spacy.max_length = 1500000
 levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers/levenshtein_final.csv")
@@ -277,6 +303,7 @@ levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers
 # print(levenshtein_dictionary["18th"])
 # sys.exit(0)
 
+# es_url = "http://localhost:9200/"
 es_url = "http://es717x3:9200/"
 index = "production-i14y-documents-searchgov-v6"
 start_date = "2023-01-01"
