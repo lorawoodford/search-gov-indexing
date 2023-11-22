@@ -168,13 +168,6 @@ def query_elasticsearch(es_client, scroll_id, scroll_duration = "10m"):
     # Make Request to ElasticSearch
     # print(str(datetime.datetime.now()),"\t",request)
     return es_client.scroll(scroll_id = scroll_id, scroll=scroll_duration)
-    # r = requests.get(
-    #     url + search_endpoint,
-    #     headers = {"Content-Type": "application/json"},
-    #     data=request
-    # )
-    # print(r.json())
-    # return r
 
 def create_scroll_elasticsearch(es_client, index, request, scroll_duration = 10):
     # Make a Scrolling request to ElasticSearch
@@ -183,11 +176,6 @@ def create_scroll_elasticsearch(es_client, index, request, scroll_duration = 10)
         body = request,
         scroll = str(scroll_duration) + "m"
     )
-    # return query_elasticsearch(
-    #     es_client,
-    #     index + "/_search?scroll=" + str(scroll_duration) + "m",
-    #     request
-    # )
 
 def push_to_elasticsearch(es_client, index, documents):
     # Use Partial document update to push to ElasticSearch
@@ -196,11 +184,6 @@ def push_to_elasticsearch(es_client, index, documents):
         es_payload.append({"update" : {"_index": index, "_id": document["id"]}})
         es_payload.append({"doc" : {"alphanumeric_values": document["alphanumeric_vals"]}})
     es_client.bulk(body=es_payload)
-    # tmp = requests.post(
-    #     url + "/_bulk",
-    #     headers = {"Content-Type": "application/json"},
-    #     data="\n".join(es_payload) + "\n"
-    # )
 
 def load_levenshtein_dictionary(file_name):
     levenshtein_dictionary = {}
