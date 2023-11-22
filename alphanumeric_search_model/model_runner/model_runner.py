@@ -11,6 +11,7 @@ import sys
 import datetime
 import signal
 import memory_profiler
+from elasticsearch import Elasticsearch
 from guppy import hpy
 from memory_profiler import profile
 
@@ -144,7 +145,7 @@ query = {
         # #     "field": "SOME_FIELD"
         # # }
     },
-    "size" : 100
+    "size" : 10
 }
 
 parser = argparse.ArgumentParser(
@@ -163,36 +164,43 @@ h = hpy()
 # Consider ability to load different Levenshtein dictionaries
 
 
-def query_elasticsearch(url, search_endpoint, request = ""):
+def query_elasticsearch(es_client, scroll_id, scroll_duration = "10m"):
     # Make Request to ElasticSearch
-    print(str(datetime.datetime.now()),"\t",request)
-    r = requests.get(
-        url + search_endpoint,
-        headers = {"Content-Type": "application/json"},
-        data=request
-    )
+    # print(str(datetime.datetime.now()),"\t",request)
+    return es_client.scroll(scroll_id = scroll_id, scroll=scroll_duration)
+    # r = requests.get(
+    #     url + search_endpoint,
+    #     headers = {"Content-Type": "application/json"},
+    #     data=request
+    # )
     # print(r.json())
-    return r
+    # return r
 
-def create_scroll_elasticsearch(url, index, request, scroll_duration = 10):
+def create_scroll_elasticsearch(es_client, index, request, scroll_duration = 10):
     # Make a Scrolling request to ElasticSearch
-    return query_elasticsearch(
-        url,
-        index + "/_search?scroll=" + str(scroll_duration) + "m",
-        request
+    return es_client.search(
+        index = index,
+        body = request,
+        scroll = str(scroll_duration) + "m"
     )
+    # return query_elasticsearch(
+    #     es_client,
+    #     index + "/_search?scroll=" + str(scroll_duration) + "m",
+    #     request
+    # )
 
-def push_to_elasticsearch(url, index, documents):
+def push_to_elasticsearch(es_client, index, documents):
     # Use Partial document update to push to ElasticSearch
     es_payload = []
     for document in documents:
-        es_payload.append(json.dumps({"update" : {"_index": index, "_id": document["id"]}}))
-        es_payload.append(json.dumps({"doc" : {"alphanumeric_values": document["alphanumeric_vals"]}}))
-    tmp = requests.post(
-        url + "/_bulk",
-        headers = {"Content-Type": "application/json"},
-        data="\n".join(es_payload) + "\n"
-    )
+        es_payload.append({"update" : {"_index": index, "_id": document["id"]}})
+        es_payload.append({"doc" : {"alphanumeric_values": document["alphanumeric_vals"]}})
+    es_client.bulk(body=es_payload)
+    # tmp = requests.post(
+    #     url + "/_bulk",
+    #     headers = {"Content-Type": "application/json"},
+    #     data="\n".join(es_payload) + "\n"
+    # )
 
 def load_levenshtein_dictionary(file_name):
     levenshtein_dictionary = {}
@@ -222,22 +230,24 @@ def process_alphanumeric_document(document):
     # sys.exit(0)
     return additional_alphanumeric_vals
 
+def collect_memory_stats():
+    file.write(str(datetime.datetime.now()))
+    file.write(str("\n"))
+    print(h.heap())
+    file.write(str(h.heap()))
+    file.write(str("\n"))
 
 @profile
-def crawl_es_index(es_url, index, start_date):
+def crawl_es_index(es_client, index, start_date):
     # Do the actual crawling
     # Call scroll
     num_docs_more_than_3m = 0
     modified_query = json.dumps(query).replace("SOME_VALUE", start_date).replace("SOME_FIELD", "updated_at")
-    results = create_scroll_elasticsearch(es_url, index, modified_query, 60)
-    json_result = results.json()
+    json_result = create_scroll_elasticsearch(es_client, index, modified_query, 60)
+    # json_result = results.json()
     num_runs = 0
     # print(json_result)
     scroll_id = json_result["_scroll_id"]
-    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    str_current_datetime = str(current_datetime)
-    file_name = "/mnt/trainingdata/ksummers/heap_usage_" + str_current_datetime + ".txt"
-    file = open(file_name, 'w')
     try:
         while True:
             # Check that there are documents to process
@@ -247,11 +257,7 @@ def crawl_es_index(es_url, index, start_date):
 
             if num_runs == 10:
                 num_runs = 0
-                file.write(str(datetime.datetime.now()))
-                file.write(str("\n"))
-                print(h.heap())
-                file.write(str(h.heap()))
-                file.write(str("\n"))
+                collect_memory_stats()
             
             # Process documents
             modified_documents = []
@@ -265,6 +271,7 @@ def crawl_es_index(es_url, index, start_date):
                                 "alphanumeric_vals": process_alphanumeric_document(document["_source"]["content_en"])
                             }
                         modified_documents.append(doc)
+                        doc = None
                         # print(len(modified_documents[-1]["alphanumeric_vals"]))
                     except ValueError as why:
                         num_docs_more_than_3m = num_docs_more_than_3m + 1
@@ -272,17 +279,11 @@ def crawl_es_index(es_url, index, start_date):
             # Write Documents to ES
             # print(modified_documents)
             # sys.exit(0)
-            push_to_elasticsearch(es_url, index, modified_documents)
+            if len(modified_documents) > 0:
+                push_to_elasticsearch(es_client, index, modified_documents)
             modified_documents = None
             # Query ElasticSearch
-            results = query_elasticsearch(es_url, "_search/scroll",
-                json.dumps({
-                    "scroll": "10m",
-                    "scroll_id": scroll_id
-                })
-            )
-            json_result = None
-            json_result = results.json()
+            json_result = query_elasticsearch(es_client, scroll_id)
             num_runs = num_runs + 1
     except KeyboardInterrupt:
         print("Exiting")
@@ -303,9 +304,20 @@ levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers
 # print(levenshtein_dictionary["18th"])
 # sys.exit(0)
 
+current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+str_current_datetime = str(current_datetime)
+file_name = "/mnt/trainingdata/ksummers/heap_usage_" + str_current_datetime + ".txt"
+# file_name = "heap_usage_" + str_current_datetime + ".txt"
+file = open(file_name, 'w')
+
+
 # es_url = "http://localhost:9200/"
 es_url = "http://es717x3:9200/"
 index = "production-i14y-documents-searchgov-v6"
 start_date = "2023-01-01"
 
-crawl_es_index(es_url, index, start_date)
+elasticsearch_client = Elasticsearch([es_url])
+
+# print(elasticsearch_client.search(index=index))
+
+crawl_es_index(elasticsearch_client, index, start_date)
