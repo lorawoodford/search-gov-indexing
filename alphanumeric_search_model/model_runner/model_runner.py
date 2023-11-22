@@ -6,7 +6,6 @@
 import argparse
 import spacy
 import json
-# import requests
 import sys
 import datetime
 import signal
