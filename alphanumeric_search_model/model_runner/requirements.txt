@@ -1,4 +1,5 @@
 requests
-spacy
+elasticsearch==7.17.7
+spacy==3.6
 argparse
 memory_profiler
