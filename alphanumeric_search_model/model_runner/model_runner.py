@@ -58,71 +58,71 @@ query = {
                                     "domain_name": "www.e-publishing.af.mil"
                                 }
                             },
-                            {
-                                "term": {
-                                    "domain_name": "www.goarmy.com"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.gsa.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.uscis.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.va.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "apps.dtic.mil"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.nrc.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.fs.usda.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.justice.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.sec.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.army.mil"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "founders.archives.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.cdc.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.osha.gov"
-                                }
-                            },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.goarmy.com"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.gsa.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.uscis.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.va.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "apps.dtic.mil"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.nrc.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.fs.usda.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.justice.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.sec.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.army.mil"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "founders.archives.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.cdc.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.osha.gov"
+                            #     }
+                            # },
                         ]
                     }
                 }
