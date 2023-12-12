@@ -47,71 +47,71 @@ query = {
                                     "domain_name": "www.e-publishing.af.mil"
                                 }
                             },
-                            {
-                                "term": {
-                                    "domain_name": "www.goarmy.com"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.gsa.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.uscis.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.va.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "apps.dtic.mil"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.nrc.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.fs.usda.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.justice.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.sec.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.army.mil"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "founders.archives.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.cdc.gov"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.osha.gov"
-                                }
-                            }
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.goarmy.com"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.gsa.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.uscis.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.va.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "apps.dtic.mil"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.nrc.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.fs.usda.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.justice.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.sec.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.army.mil"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "founders.archives.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.cdc.gov"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.osha.gov"
+                            #     }
+                            # }
                         ]
                     }
                 }
@@ -231,35 +231,35 @@ regex_expressions = [
     "[0-9]+[a-z]+\\\.[0-9]+[A-Z]*",
     "[0-9]+[A-Z]+\\\.[0-9]+[A-Z]*",
         
-    "[a-z]+[0-9]*\\\s[a-z]+[0-9]+",
-    "[A-Z]+[0-9]*\\\s[a-z]+[0-9]+",
-    "[a-z]+[0-9]*\\\s[A-Z]+[0-9]+",
-    "[A-Z]+[0-9]*\\\s[A-Z]+[0-9]+",
+    "[a-z]+[0-9]* [a-z]+[0-9]+",
+    "[A-Z]+[0-9]* [a-z]+[0-9]+",
+    "[a-z]+[0-9]* [A-Z]+[0-9]+",
+    "[A-Z]+[0-9]* [A-Z]+[0-9]+",
 
-    "[a-z]+[0-9]+\\\s[a-z]+[0-9]*",
-    "[A-Z]+[0-9]+\\\s[a-z]+[0-9]*",
-    "[a-z]+[0-9]+\\\s[A-Z]+[0-9]*",
-    "[A-Z]+[0-9]+\\\s[A-Z]+[0-9]*",
+    "[a-z]+[0-9]+ [a-z]+[0-9]*",
+    "[A-Z]+[0-9]+ [a-z]+[0-9]*",
+    "[a-z]+[0-9]+ [A-Z]+[0-9]*",
+    "[A-Z]+[0-9]+ [A-Z]+[0-9]*",
 
-    "[a-z]+[0-9]*\\\s[0-9]+[a-z]*",
+    "[a-z]+[0-9]* [0-9]+[a-z]*",
     "[A-Z]+[0-9]* [0-9]+[a-z]*",
-    "[a-z]+[0-9]*\\\s[0-9]+[A-Z]*",
-    "[A-Z]+[0-9]*\\\s[0-9]+[A-Z]*",
+    "[a-z]+[0-9]* [0-9]+[A-Z]*",
+    "[A-Z]+[0-9]* [0-9]+[A-Z]*",
 
-    "[0-9]+[a-z]*\\\s[a-z]+[0-9]*",
-    "[0-9]+[A-Z]*\\\s[a-z]+[0-9]*",
-    "[0-9]+[a-z]*\\\s[A-Z]+[0-9]*",
-    "[0-9]+[A-Z]*\\\s[A-Z]+[0-9]*",
+    "[0-9]+[a-z]* [a-z]+[0-9]*",
+    "[0-9]+[A-Z]* [a-z]+[0-9]*",
+    "[0-9]+[a-z]* [A-Z]+[0-9]*",
+    "[0-9]+[A-Z]* [A-Z]+[0-9]*",
 
-    "[0-9]+[a-z]+\\\s[0-9]+[a-z]*",
-    "[0-9]+[A-Z]+\\\s[0-9]+[a-z]*",
-    "[0-9]+[a-z]+\\\s[0-9]+[A-Z]*",
-    "[0-9]+[A-Z]+\\\s[0-9]+[A-Z]*",
+    "[0-9]+[a-z]+ [0-9]+[a-z]*",
+    "[0-9]+[A-Z]+ [0-9]+[a-z]*",
+    "[0-9]+[a-z]+ [0-9]+[A-Z]*",
+    "[0-9]+[A-Z]+ [0-9]+[A-Z]*",
 
-    "[0-9]+[a-z]*\\\s[0-9]+[a-z]+",
-    "[0-9]+[a-z]*\\\s[0-9]+[a-z]+",
-    "[0-9]+[a-z]*\\\s[0-9]+[a-z]+",
-    "[0-9]+[a-z]*\\\s[0-9]+[a-z]+",
+    "[0-9]+[a-z]* [0-9]+[a-z]+",
+    "[0-9]+[a-z]* [0-9]+[a-z]+",
+    "[0-9]+[a-z]* [0-9]+[a-z]+",
+    "[0-9]+[a-z]* [0-9]+[a-z]+",
 ]
 
 def query_elasticsearch(es_url, search_endpoint, body = ""):
