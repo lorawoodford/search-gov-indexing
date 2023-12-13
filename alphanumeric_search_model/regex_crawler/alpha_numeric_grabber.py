@@ -277,6 +277,11 @@ def create_scroll_elasticsearch(url, index, body, scroll_duration):
         body
     )
 
+def clear_scroll_context(url, scroll_id)
+    return requests.delete(
+        url + "_search/scroll/" + str(scroll_id)
+    )
+
 def push_to_elasticsearch(url, index, documents):
     # Use Partial document update to push to ElasticSearch
     es_payload = []
@@ -318,7 +323,8 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0
     while True:
         # print(doc_count, "\t", docs_processed, "\t", (doc_count - docs_processed))
         if len(json_result["hits"]["hits"]) == 0:
-           break
+            clear_scroll_context(es_url[es_node], scroll_id)
+            break
         
         # if docs_processed > 20:
         #     break
