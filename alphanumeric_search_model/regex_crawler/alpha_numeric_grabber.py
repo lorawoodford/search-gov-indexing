@@ -312,6 +312,8 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0
         print(json_result)
         return
 
+    print("Num Docs: ", len(json_result["hits"]["hits"]))
+
     scroll_id = json_result["_scroll_id"]
     while True:
         # print(doc_count, "\t", docs_processed, "\t", (doc_count - docs_processed))
