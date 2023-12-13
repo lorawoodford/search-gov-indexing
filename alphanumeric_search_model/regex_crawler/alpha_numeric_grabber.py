@@ -279,7 +279,7 @@ def create_scroll_elasticsearch(url, index, body, scroll_duration):
 
 def clear_scroll_context(url, scroll_id):
     return requests.delete(
-        url + "_search/scroll/" + str(scroll_id)
+        url + "/_search/scroll/" + str(scroll_id)
     )
 
 def push_to_elasticsearch(url, index, documents):
