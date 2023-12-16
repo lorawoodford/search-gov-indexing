@@ -38,7 +38,7 @@ query = {
                     "exists": {
                         "field": "content_en"
                     }
-                }
+                },
                 {
                     "bool": {
                         "should" : [
