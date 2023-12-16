@@ -26,14 +26,14 @@ query = {
                 # },
             ],
             "filter": [
-                {
-                    "regexp": {
-                        "SOME_IMPORTANT_FIELD": {
-                            "value": "SOME_REGEX_PATTERN",
-                            "case_insensitive": True
-                        }
-                    }
-                },
+                # {
+                #     "regexp": {
+                #         "SOME_IMPORTANT_FIELD": {
+                #             "value": "SOME_REGEX_PATTERN",
+                #             "case_insensitive": True
+                #         }
+                #     }
+                # },
                 {
                     "bool": {
                         "should" : [
@@ -122,10 +122,10 @@ query = {
 
 indices = {
     "production-i14y-documents-searchgov-v6-reindex_keyword" : [
-        "title_en.raw",
-        "title_en.raw.keyword",
-        "content_en.raw",
-        "content_en.raw.keyword"
+        "title_en",
+        # "title_en.raw.keyword",
+        "content_en",
+        # "content_en.raw.keyword"
     ],
     # "human_logstash-*": [
     #     "params.query.raw"
@@ -144,50 +144,50 @@ es_urls = [
 # do searching with case insensitivity enabled.
 regex_expressions = [
     "[0-9]+[a-z]+",
-    "[0-9]+[A-Z]+",
+    # "[0-9]+[A-Z]+",
 
     "[a-z]+[0-9]+",
-    "[A-Z]+[0-9]+",
+    # "[A-Z]+[0-9]+",
 
     "[a-z]+[0-9]+-[a-z]+[0-9]*",
-    "[A-Z]+[0-9]+-[a-z]+[0-9]*",
-    "[a-z]+[0-9]+-[A-Z]+[0-9]*",
-    "[A-Z]+[0-9]+-[A-Z]+[0-9]*",
+    # "[A-Z]+[0-9]+-[a-z]+[0-9]*",
+    # "[a-z]+[0-9]+-[A-Z]+[0-9]*",
+    # "[A-Z]+[0-9]+-[A-Z]+[0-9]*",
 
     "[a-z]+[0-9]*-[a-z]+[0-9]+",
-    "[A-Z]+[0-9]*-[a-z]+[0-9]+",
-    "[a-z]+[0-9]*-[A-Z]+[0-9]+",
-    "[A-Z]+[0-9]*-[A-Z]+[0-9]+",
+    # "[A-Z]+[0-9]*-[a-z]+[0-9]+",
+    # "[a-z]+[0-9]*-[A-Z]+[0-9]+",
+    # "[A-Z]+[0-9]*-[A-Z]+[0-9]+",
 
     "[a-z]+[0-9]+-[0-9]+[a-z]*",
-    "[a-z]+[0-9]+-[0-9]+[A-Z]*",
-    "[A-Z]+[0-9]+-[0-9]+[a-z]*",
-    "[A-Z]+[0-9]+-[0-9]+[A-Z]*",
+    # "[a-z]+[0-9]+-[0-9]+[A-Z]*",
+    # "[A-Z]+[0-9]+-[0-9]+[a-z]*",
+    # "[A-Z]+[0-9]+-[0-9]+[A-Z]*",
     
     "[a-z]+[0-9]*-[0-9]+[a-z]+",
-    "[a-z]+[0-9]*-[0-9]+[A-Z]+",
-    "[A-Z]+[0-9]*-[0-9]+[a-z]+",
-    "[A-Z]+[0-9]*-[0-9]+[A-Z]+",
+    # "[a-z]+[0-9]*-[0-9]+[A-Z]+",
+    # "[A-Z]+[0-9]*-[0-9]+[a-z]+",
+    # "[A-Z]+[0-9]*-[0-9]+[A-Z]+",
 
     "[0-9]+[a-z]+-[a-z]+[0-9]*",
-    "[0-9]+[A-Z]+-[a-z]+[0-9]*",
-    "[0-9]+[a-z]+-[A-Z]+[0-9]*",
-    "[0-9]+[A-Z]+-[A-Z]+[0-9]*",
+    # "[0-9]+[A-Z]+-[a-z]+[0-9]*",
+    # "[0-9]+[a-z]+-[A-Z]+[0-9]*",
+    # "[0-9]+[A-Z]+-[A-Z]+[0-9]*",
 
     "[0-9]+[a-z]*-[a-z]+[0-9]+",
-    "[0-9]+[A-Z]*-[a-z]+[0-9]+",
-    "[0-9]+[a-z]*-[A-Z]+[0-9]+",
-    "[0-9]+[A-Z]*-[A-Z]+[0-9]+",
+    # "[0-9]+[A-Z]*-[a-z]+[0-9]+",
+    # "[0-9]+[a-z]*-[A-Z]+[0-9]+",
+    # "[0-9]+[A-Z]*-[A-Z]+[0-9]+",
 
     "[0-9]+[a-z]*-[0-9]+[a-z]+",
-    "[0-9]+[A-Z]*-[0-9]+[a-z]+",
-    "[0-9]+[a-z]*-[0-9]+[A-Z]+",
-    "[0-9]+[A-Z]*-[0-9]+[A-Z]+",
+    # "[0-9]+[A-Z]*-[0-9]+[a-z]+",
+    # "[0-9]+[a-z]*-[0-9]+[A-Z]+",
+    # "[0-9]+[A-Z]*-[0-9]+[A-Z]+",
 
     "[0-9]+[a-z]+-[0-9]+[a-z]*",
-    "[0-9]+[A-Z]+-[0-9]+[a-z]*",
-    "[0-9]+[a-z]+-[0-9]+[A-Z]*",
-    "[0-9]+[A-Z]+-[0-9]+[A-Z]*",
+    # "[0-9]+[A-Z]+-[0-9]+[a-z]*",
+    # "[0-9]+[a-z]+-[0-9]+[A-Z]*",
+    # "[0-9]+[A-Z]+-[0-9]+[A-Z]*",
 
     # Sections, leaving this disabled for now
     # # "([a-z]+[0-9]*§[a-z]+[0-9]*)",
@@ -196,70 +196,70 @@ regex_expressions = [
     # # "([0-9]+[a-z]*§[0-9]+[a-z]*)",
     # # "([a-z]+[0-9]*.[a-z]+[0-9]*)",
 
-    "[a-z]+[0-9]*\\\.[a-z]+[0-9]+",
-    "[A-Z]+[0-9]*\\\.[a-z]+[0-9]+",
-    "[a-z]+[0-9]*\\\.[A-Z]+[0-9]+",
-    "[A-Z]+[0-9]*\\\.[A-Z]+[0-9]+",
+    "[a-z]+[0-9]*\\.[a-z]+[0-9]+",
+    # "[A-Z]+[0-9]*\\\.[a-z]+[0-9]+",
+    # "[a-z]+[0-9]*\\\.[A-Z]+[0-9]+",
+    # "[A-Z]+[0-9]*\\\.[A-Z]+[0-9]+",
 
-    "[a-z]+[0-9]+\\\.[a-z]+[0-9]*",
-    "[A-Z]+[0-9]+\\\.[a-z]+[0-9]*",
-    "[a-z]+[0-9]+\\\.[A-Z]+[0-9]*",
-    "[A-Z]+[0-9]+\\\.[A-Z]+[0-9]*",
+    "[a-z]+[0-9]+\\.[a-z]+[0-9]*",
+    # "[A-Z]+[0-9]+\\\.[a-z]+[0-9]*",
+    # "[a-z]+[0-9]+\\\.[A-Z]+[0-9]*",
+    # "[A-Z]+[0-9]+\\\.[A-Z]+[0-9]*",
 
-    "[a-z]+[0-9]+\\\.[a-z]+[0-9]+",
-    "[A-Z]+[0-9]+\\\.[a-z]+[0-9]+",
-    "[a-z]+[0-9]+\\\.[A-Z]+[0-9]+",
-    "[A-Z]+[0-9]+\\\.[A-Z]+[0-9]+",
+    "[a-z]+[0-9]+\\.[a-z]+[0-9]+",
+    # "[A-Z]+[0-9]+\\\.[a-z]+[0-9]+",
+    # "[a-z]+[0-9]+\\\.[A-Z]+[0-9]+",
+    # "[A-Z]+[0-9]+\\\.[A-Z]+[0-9]+",
 
-    "[a-z]+[0-9]*\\\.[0-9]+[a-z]*",
-    "[a-z]+[0-9]*\\\.[0-9]+[A-Z]*",
-    "[A-Z]+[0-9]*\\\.[0-9]+[a-z]*",
-    "[A-Z]+[0-9]*\\\.[0-9]+[A-Z]*",
+    "[a-z]+[0-9]*\\.[0-9]+[a-z]*",
+    # "[a-z]+[0-9]*\\\.[0-9]+[A-Z]*",
+    # "[A-Z]+[0-9]*\\\.[0-9]+[a-z]*",
+    # "[A-Z]+[0-9]*\\\.[0-9]+[A-Z]*",
 
-    "[0-9]+[a-z]*\\\.[a-z]+[0-9]*",
-    "[0-9]+[A-Z]*\\\.[a-z]+[0-9]*",
-    "[0-9]+[a-z]*\\\.[A-Z]+[0-9]*",
-    "[0-9]+[A-Z]*\\\.[A-Z]+[0-9]*",
+    "[0-9]+[a-z]*\\.[a-z]+[0-9]*",
+    # "[0-9]+[A-Z]*\\\.[a-z]+[0-9]*",
+    # "[0-9]+[a-z]*\\\.[A-Z]+[0-9]*",
+    # "[0-9]+[A-Z]*\\\.[A-Z]+[0-9]*",
 
-    "[0-9]+[a-z]*\\\.[0-9]+[a-z]+",
-    "[0-9]+[A-Z]*\\\.[0-9]+[a-z]+",
-    "[0-9]+[a-z]*\\\.[0-9]+[A-Z]+",
-    "[0-9]+[A-Z]*\\\.[0-9]+[A-Z]+",
+    "[0-9]+[a-z]*\\.[0-9]+[a-z]+",
+    # "[0-9]+[A-Z]*\\\.[0-9]+[a-z]+",
+    # "[0-9]+[a-z]*\\\.[0-9]+[A-Z]+",
+    # "[0-9]+[A-Z]*\\\.[0-9]+[A-Z]+",
     
-    "[0-9]+[a-z]+\\\.[0-9]+[a-z]*",
-    "[0-9]+[A-Z]+\\\.[0-9]+[a-z]*",
-    "[0-9]+[a-z]+\\\.[0-9]+[A-Z]*",
-    "[0-9]+[A-Z]+\\\.[0-9]+[A-Z]*",
+    "[0-9]+[a-z]+\\.[0-9]+[a-z]*",
+    # "[0-9]+[A-Z]+\\\.[0-9]+[a-z]*",
+    # "[0-9]+[a-z]+\\\.[0-9]+[A-Z]*",
+    # "[0-9]+[A-Z]+\\\.[0-9]+[A-Z]*",
         
     "[a-z]+[0-9]* [a-z]+[0-9]+",
-    "[A-Z]+[0-9]* [a-z]+[0-9]+",
-    "[a-z]+[0-9]* [A-Z]+[0-9]+",
-    "[A-Z]+[0-9]* [A-Z]+[0-9]+",
+    # "[A-Z]+[0-9]* [a-z]+[0-9]+",
+    # "[a-z]+[0-9]* [A-Z]+[0-9]+",
+    # "[A-Z]+[0-9]* [A-Z]+[0-9]+",
 
     "[a-z]+[0-9]+ [a-z]+[0-9]*",
-    "[A-Z]+[0-9]+ [a-z]+[0-9]*",
-    "[a-z]+[0-9]+ [A-Z]+[0-9]*",
-    "[A-Z]+[0-9]+ [A-Z]+[0-9]*",
+    # "[A-Z]+[0-9]+ [a-z]+[0-9]*",
+    # "[a-z]+[0-9]+ [A-Z]+[0-9]*",
+    # "[A-Z]+[0-9]+ [A-Z]+[0-9]*",
 
     "[a-z]+[0-9]* [0-9]+[a-z]*",
-    "[A-Z]+[0-9]* [0-9]+[a-z]*",
-    "[a-z]+[0-9]* [0-9]+[A-Z]*",
-    "[A-Z]+[0-9]* [0-9]+[A-Z]*",
+    # "[A-Z]+[0-9]* [0-9]+[a-z]*",
+    # "[a-z]+[0-9]* [0-9]+[A-Z]*",
+    # "[A-Z]+[0-9]* [0-9]+[A-Z]*",
 
     "[0-9]+[a-z]* [a-z]+[0-9]*",
-    "[0-9]+[A-Z]* [a-z]+[0-9]*",
-    "[0-9]+[a-z]* [A-Z]+[0-9]*",
-    "[0-9]+[A-Z]* [A-Z]+[0-9]*",
+    # "[0-9]+[A-Z]* [a-z]+[0-9]*",
+    # "[0-9]+[a-z]* [A-Z]+[0-9]*",
+    # "[0-9]+[A-Z]* [A-Z]+[0-9]*",
 
     "[0-9]+[a-z]+ [0-9]+[a-z]*",
-    "[0-9]+[A-Z]+ [0-9]+[a-z]*",
-    "[0-9]+[a-z]+ [0-9]+[A-Z]*",
-    "[0-9]+[A-Z]+ [0-9]+[A-Z]*",
+    # "[0-9]+[A-Z]+ [0-9]+[a-z]*",
+    # "[0-9]+[a-z]+ [0-9]+[A-Z]*",
+    # "[0-9]+[A-Z]+ [0-9]+[A-Z]*",
 
     "[0-9]+[a-z]* [0-9]+[a-z]+",
-    "[0-9]+[a-z]* [0-9]+[a-z]+",
-    "[0-9]+[a-z]* [0-9]+[a-z]+",
-    "[0-9]+[a-z]* [0-9]+[a-z]+",
+    # "[0-9]+[a-z]* [0-9]+[a-z]+",
+    # "[0-9]+[a-z]* [0-9]+[a-z]+",
+    # "[0-9]+[a-z]* [0-9]+[a-z]+",
 ]
 
 def query_elasticsearch(es_url, search_endpoint, body = ""):
@@ -304,9 +304,9 @@ def create_i14y_doc(doc, regex, field):
     }
     # return
 
-def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0):
-    modified_query = json.dumps(query).replace("SOME_REGEX_PATTERN", regex_pattern).replace("SOME_IMPORTANT_FIELD", field)
-    results = create_scroll_elasticsearch(es_url[0], index, modified_query, 60)
+def crawl_es_index(es_url, index):
+    # modified_query = json.dumps(query).replace("SOME_REGEX_PATTERN", regex_pattern).replace("SOME_IMPORTANT_FIELD", field)
+    results = create_scroll_elasticsearch(es_url[0], index, json.dumps(query), 60)
     json_result = results.json()
     # docs_processed = 0
     es_node = 0
@@ -320,10 +320,12 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0
     print("Num Docs: ", len(json_result["hits"]["hits"]))
 
     scroll_id = json_result["_scroll_id"]
+    # some_int = 0
     while True:
+    # while some_int < 5:
         # print(doc_count, "\t", docs_processed, "\t", (doc_count - docs_processed))
         if len(json_result["hits"]["hits"]) == 0:
-            clear_scroll_context(es_url[es_node], scroll_id)
+            # clear_scroll_context(es_url[es_node], scroll_id)
             break
         
         # if docs_processed > 20:
@@ -334,8 +336,11 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0
         # print(temp_doc_list)
 
         for document in json_result["hits"]["hits"]:
-            scan_field = field.replace(".raw", "").replace(".keyword", "")
-            temp_doc_list.append(create_i14y_doc(document, regex_pattern, scan_field))
+            for field in indices[index]:
+                # scan_field = field.replace(".raw", "").replace(".keyword", "")
+                for regex_pattern in regex_expressions:
+                    print(" ****************** ", field, ": ", regex_pattern, " ****************** ")
+                    temp_doc_list.append(create_i14y_doc(document, regex_pattern, field))
             # docs_processed = docs_processed + 1
         
         # print(temp_doc_list)
@@ -351,15 +356,18 @@ def crawl_es_index_with_field(es_url, index, field, regex_pattern, doc_count = 0
         }))
         json_result = results.json()
         es_node = (es_node + 1) % len(es_urls)
+        # some_int = some_int + 1
     # return
+    clear_scroll_context(es_url[es_node], scroll_id)
+
 
 for index in list(indices.keys()):
-    for field in indices[index]:
-        for regexp in regex_expressions:
-            print(" ****************** ", field, ": ", regexp, " ****************** ")
-            count_query = query.copy()
-            del count_query["sort"]
-            del count_query["size"]
-            modified_query = json.dumps(count_query).replace("SOME_REGEX_PATTERN", regexp).replace("SOME_IMPORTANT_FIELD", field)
-            result = query_elasticsearch(es_urls[0], "/" + index + "/_count", modified_query)
-            crawl_es_index_with_field(es_urls, index, field, regexp, result.json()["count"])
+    # for field in indices[index]:
+        # for regexp in regex_expressions:
+    # print(" ****************** ", field, ": ", regexp, " ****************** ")
+    # count_query = query.copy()
+    # del count_query["sort"]
+    # del count_query["size"]
+    # modified_query = json.dumps(count_query).replace("SOME_REGEX_PATTERN", regexp).replace("SOME_IMPORTANT_FIELD", field)
+    # result = query_elasticsearch(es_urls[0], "/" + index + "/_count", modified_query)
+    crawl_es_index(es_urls, index)
