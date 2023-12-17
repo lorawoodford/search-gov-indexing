@@ -76,8 +76,8 @@ def generate_list_from_i14y():
     domains = ["static.e-publishing.af.mil", "www.e-publishing.af.mil"]
     # Iterate over keys:
     for domain in domains:
-        print( domain['key'])
-        payload = json.dumps(query2).replace("THIS_AS_WELL", domain['key']).replace("REPLACE_THIS", "domain_name")
+        print( domain)
+        payload = json.dumps(query2).replace("THIS_AS_WELL", domain).replace("REPLACE_THIS", "domain_name")
         print(payload)
         es_query_val = json.loads(query_elasticsearch(search_endpoint, payload).text)
         for regex_pattern in es_query_val["aggregations"]["regex_patterns"]["buckets"]:
