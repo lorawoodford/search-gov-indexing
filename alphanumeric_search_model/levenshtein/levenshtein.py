@@ -33,7 +33,7 @@ query2 = {
         "regex_patterns" : {
             "terms": {
                 "field": "regex_patterns.keyword",
-                "size": 1000
+                "size": 8000
             }
         }
     },
@@ -72,8 +72,10 @@ def generate_list_from_i14y():
     r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "domain_name"))
     response = json.loads(r.text)
     print(response['aggregations']['regex_count']['buckets'])
+    # domains = response['aggregations']['regex_count']['buckets']
+    domains = ["static.e-publishing.af.mil", "www.e-publishing.af.mil"]
     # Iterate over keys:
-    for domain in response['aggregations']['regex_count']['buckets']:
+    for domain in domains:
         print( domain['key'])
         payload = json.dumps(query2).replace("THIS_AS_WELL", domain['key']).replace("REPLACE_THIS", "domain_name")
         print(payload)
@@ -103,10 +105,10 @@ generate_list_from_logstash_requests()
 print(logstash_list)
 print(len(set(logstash_list)))
 for i14y in set(i14y_list):
-    for logstash_word in set(logstash_list):
+    for logstash_word in set(i14y_list):
         get_levenshtein_distance(i14y, logstash_word)
 # print(*distance_touple, sep='\n')
 
-with open ("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "w", encoding="utf-8") as f:
+with open ("/mnt/trainingdata/ksummers/levenshtein_raw_epubs.txt", "w", encoding="utf-8") as f:
     for line in distance_touple:
         f.write(",".join(line)+"\n")
