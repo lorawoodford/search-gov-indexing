@@ -33,7 +33,7 @@ query2 = {
         "regex_patterns" : {
             "terms": {
                 "field": "doc.regex_patterns",
-                "size": 500
+                "size": 8000
             }
         }
     },
@@ -64,11 +64,13 @@ query3 = {
     "size": 1
 }
 
+# es_url = "http://localhost:9200/"
 es_url = "http://es717x3:9200/"
 
 i14y_list = []
 
 def query_elasticsearch(search_endpoint, body = ""):
+    # print(es_url)
     r = requests.get(
         es_url + search_endpoint, 
         headers = {"Content-Type": "application/json"},
@@ -86,9 +88,9 @@ def generate_list_from_i14y():
     # for domain in response['aggregations']['regex_count']['buckets']:
     #     print(domain["key"] + " " + str(domain["doc_count"]))
     # Iterate over keys:
-    domains = ["www.gsa.gov", "www.goarmy.com", "static.e-publishing.af.mil"]
-    for domain in response['aggregations']['regex_count']['buckets']:
-        domains.append(domain['key'])
+    domains = ["static.e-publishing.af.mil", "www.e-publishing.af.mil"]
+    # for domain in response['aggregations']['regex_count']['buckets']:
+    #     domains.append(domain['key'])
     print(str(datetime.datetime.now()) + " Iterating over " + str(len(domains)) + " domains")
     for domain in domains: #response['aggregations']['regex_count']['buckets']:
         print(domain)
