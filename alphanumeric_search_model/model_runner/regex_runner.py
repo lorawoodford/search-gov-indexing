@@ -9,6 +9,7 @@ import json
 import sys
 import datetime
 import signal
+import re
 import memory_profiler
 from elasticsearch import Elasticsearch
 from guppy import hpy
