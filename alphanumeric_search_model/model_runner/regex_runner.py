@@ -233,7 +233,7 @@ def load_levenshtein_dictionary(file_name):
 def process_alphanumeric_document(document):
     alpha_numerics = []
     for regexp in regex_patterns:
-        temp_ans = re.findall(regexp.replace("\\\\", "\\"), doc["_source"][field], re.IGNORECASE)
+        temp_ans = re.findall(regexp.replace("\\\\", "\\"), document, re.IGNORECASE)
         temp_ans = list(set(temp_ans))
         for alpha_numeric in temp_ans:
             if alpha_numeric in levenshtein_dictionary:
