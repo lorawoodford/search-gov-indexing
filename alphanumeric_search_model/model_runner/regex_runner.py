@@ -147,7 +147,7 @@ query = {
     "size" : 100
 }
 
-regex_expressions = [
+regex_patterns = [
     "[0-9]+[a-z]+",
     "[a-z]+[0-9]+",
 
