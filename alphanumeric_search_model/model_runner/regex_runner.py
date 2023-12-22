@@ -238,7 +238,7 @@ def process_alphanumeric_document(document):
         for alpha_numeric in temp_ans:
             if alpha_numeric in levenshtein_dictionary:
                 alpha_numerics.append(levenshtein_dictionary[alpha_numeric])
-    return additional_alphanumeric_vals
+    return alpha_numerics
 
 def collect_memory_stats():
     file.write(str(datetime.datetime.now()))
