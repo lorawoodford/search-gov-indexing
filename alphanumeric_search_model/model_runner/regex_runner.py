@@ -4,7 +4,7 @@
 # Consider partial document updates...
 
 import argparse
-import spacy
+# import spacy
 import json
 import sys
 import datetime
@@ -306,9 +306,9 @@ args = parser.parse_args()
 
 # alphanumeric_spacy = spacy.load("../spacy_model_training/alpha_numeric_ner_model/")
 # levenshtein_dictionary = load_levenshtein_dictionary("../levenshtein_final.csv")
-alphanumeric_spacy = spacy.load("/mnt/trainingdata/ksummers/alpha_numeric_ner_model/")
-alphanumeric_spacy.max_length = 1500000
-levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers/levenshtein_final.csv")
+# alphanumeric_spacy = spacy.load("/mnt/trainingdata/ksummers/alpha_numeric_ner_model/")
+# alphanumeric_spacy.max_length = 1500000
+levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers/levenshtein_final_epubs.csv")
 
 # print(levenshtein_dictionary["18th"])
 # sys.exit(0)
