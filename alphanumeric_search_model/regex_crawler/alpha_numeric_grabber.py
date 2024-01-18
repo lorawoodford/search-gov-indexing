@@ -13,7 +13,7 @@ query = {
             "_score" :{ "order" : "desc"}
         }
     ],
-    "size" : 1000,
+    "size" : 10,
     "query" : {
         "bool" :{
             "must" : [
@@ -138,21 +138,21 @@ indices = {
 }
 
 es_urls = [
-    # "http://localhost:9200"
-    "http://es717x1:9200",
-    "http://es717x2:9200",
-    "http://es717x3:9200",
-    "http://es717x4:9200",
+    "http://localhost:9200"
+    # "http://es717x1:9200",
+    # "http://es717x2:9200",
+    # "http://es717x3:9200",
+    # "http://es717x4:9200",
 ]
 
 # Although Python will do case insensitive searching for regex patterns, ES 7.17 doesn't appear to 
 # do searching with case insensitivity enabled.
 regex_expressions = [
-    "[0-9]+[a-z]+",
-    # "[0-9]+[A-Z]+",
+    # "[0-9]+[a-z]+",
+    # # "[0-9]+[A-Z]+",
 
-    "[a-z]+[0-9]+",
-    # "[A-Z]+[0-9]+",
+    # "[a-z]+[0-9]+",
+    # # "[A-Z]+[0-9]+",
 
     "[a-z]+[0-9]+-[a-z]+[0-9]*",
     # "[A-Z]+[0-9]+-[a-z]+[0-9]*",
@@ -300,9 +300,18 @@ def push_to_elasticsearch(url, index, documents):
     )
     return tmp
 
+def verify_alphanumeric_values(values):
+    print(values)
+    new_values = []
+    for alphanumeric in values:
+        punc_free = re.sub("[-\s\.]", "", alphanumeric)
+        print(alphanumeric, "\t", punc_free, "\t", re.sub("\d", "", punc_free).isalpha(), "\t", re.sub("[a-zA-Z]", "", punc_free).isnumeric())
+        # if re.sub("")
+
 def create_i14y_doc(doc, regex, field):
     # print(regex, "\t", doc["_source"][field])
     # print(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))
+    verify_alphanumeric_values(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))
     return {
         "domain_name" : doc["_source"]["domain_name"],
         "regex_patterns" : re.findall(regex.replace("\\\\", "\\"), doc["_source"][field], re.IGNORECASE)
@@ -325,9 +334,9 @@ def crawl_es_index(es_url, index):
     print("Num Docs: ", len(json_result["hits"]["hits"]))
 
     scroll_id = json_result["_scroll_id"]
-    # some_int = 0
-    while True:
-    # while some_int < 5:
+    some_int = 0
+    # while True:
+    while some_int < 2:
         # print(doc_count, "\t", docs_processed, "\t", (doc_count - docs_processed))
         if len(json_result["hits"]["hits"]) == 0:
             # clear_scroll_context(es_url[es_node], scroll_id)
@@ -343,6 +352,7 @@ def crawl_es_index(es_url, index):
         for document in json_result["hits"]["hits"]:
             for field in indices[index]:
                 # scan_field = field.replace(".raw", "").replace(".keyword", "")
+                # regex_pattern = regex_expressions[0]
                 for regex_pattern in regex_expressions:
                     print(" ****************** ", field, ": ", regex_pattern, " ****************** ")
                     temp_doc_list.append(create_i14y_doc(document, regex_pattern, field))
@@ -361,7 +371,7 @@ def crawl_es_index(es_url, index):
         }))
         json_result = results.json()
         es_node = (es_node + 1) % len(es_urls)
-        # some_int = some_int + 1
+        some_int = some_int + 1
     # return
     clear_scroll_context(es_url[es_node], scroll_id)
 
