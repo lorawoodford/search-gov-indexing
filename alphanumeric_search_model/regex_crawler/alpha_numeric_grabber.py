@@ -13,7 +13,7 @@ query = {
             "_score" :{ "order" : "desc"}
         }
     ],
-    "size" : 10,
+    "size" : 100,
     "query" : {
         "bool" :{
             "must" : [
@@ -138,11 +138,11 @@ indices = {
 }
 
 es_urls = [
-    "http://localhost:9200"
-    # "http://es717x1:9200",
-    # "http://es717x2:9200",
-    # "http://es717x3:9200",
-    # "http://es717x4:9200",
+    # "http://localhost:9200"
+    "http://es717x1:9200",
+    "http://es717x2:9200",
+    "http://es717x3:9200",
+    "http://es717x4:9200",
 ]
 
 # Although Python will do case insensitive searching for regex patterns, ES 7.17 doesn't appear to 
@@ -301,20 +301,22 @@ def push_to_elasticsearch(url, index, documents):
     return tmp
 
 def verify_alphanumeric_values(values):
-    print(values)
+    # print(values)
     new_values = []
     for alphanumeric in values:
         punc_free = re.sub("[-\s\.]", "", alphanumeric)
-        print(alphanumeric, "\t", punc_free, "\t", re.sub("\d", "", punc_free).isalpha(), "\t", re.sub("[a-zA-Z]", "", punc_free).isnumeric())
-        # if re.sub("")
+        # print(alphanumeric, "\t", punc_free, "\t", re.sub("\d", "", punc_free).isalpha(), "\t", re.sub("[a-zA-Z]", "", punc_free).isnumeric())
+        if re.sub("\d", "", punc_free).isalpha() and re.sub("[a-zA-Z]", "", punc_free).isnumeric():
+            new_values.append(alphanumeric)
+    return new_values
 
 def create_i14y_doc(doc, regex, field):
     # print(regex, "\t", doc["_source"][field])
     # print(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))
-    verify_alphanumeric_values(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))
+    # verify_alphanumeric_values(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))
     return {
         "domain_name" : doc["_source"]["domain_name"],
-        "regex_patterns" : re.findall(regex.replace("\\\\", "\\"), doc["_source"][field], re.IGNORECASE)
+        "regex_patterns" : verify_alphanumeric_values(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field], re.IGNORECASE))
     }
     # return
 
