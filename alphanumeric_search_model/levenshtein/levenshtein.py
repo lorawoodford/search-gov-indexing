@@ -117,9 +117,9 @@ generate_list_from_i14y()
 # some_list = i14y_list.sort()
 print(i14y_list)
 print(len(set(i14y_list)))
-generate_list_from_logstash_requests()
-print(logstash_list)
-print(len(set(logstash_list)))
+# generate_list_from_logstash_requests()
+# print(logstash_list)
+# print(len(set(logstash_list)))
 for i14y in set(i14y_list):
     for logstash_word in set(i14y_list):
         get_levenshtein_distance(i14y, logstash_word)
