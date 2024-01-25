@@ -14,6 +14,9 @@
 
 import requests
 from Levenshtein import ratio
+from Levenshtein import hamming
+from Levenshtein import distance
+import re
 import json
 
 query1 = {
@@ -53,6 +56,7 @@ logstash_list = []
 distance_touple = []
 
 es_url = "http://es717x3:9200/"
+# es_url = "http://localhost:9200/"
 
 def query_elasticsearch(search_endpoint, body = ""):
     r = requests.get(
@@ -67,8 +71,20 @@ def get_levenshtein_distance(word_one, word_two):
     if lratio > 0.0:
         distance_touple.append([word_one, word_two, str(lratio)])
 
+def alphanumeric_levenshtein_comparitor(word):
+    print(word)
+    # Take the word
+    new_word = re.sub("\W", " ", word)
+    print("\t",new_word)
+    # Replace the Non Alphanumeric chars with spaces
+    # Split into array based on space
+    #  Combine EVERY permutation of spaces
+    # Do Levenshtein distance calculation
+    print("\t\t", hamming(word, new_word))
+    print("\t\t", distance(word, new_word))
+
 def generate_list_from_i14y():
-    search_endpoint = "production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search"
+    search_endpoint = "production-i14y-documents-searchgov-v6-reindex_keyword_regex_py/_search"
     r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "domain_name"))
     response = json.loads(r.text)
     print(response['aggregations']['regex_count']['buckets'])
