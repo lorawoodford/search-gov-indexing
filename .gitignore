@@ -49,3 +49,5 @@
 /spider-foundational-work/search_gov_spiders/search_gov_spiders/__pycache__
 
 spider-foundational-work/search_gov_spiders/search_gov_spiders/spiders/scrapy_urls
+
+/.idea
