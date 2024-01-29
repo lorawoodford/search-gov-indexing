@@ -125,6 +125,6 @@ for i14y in set(i14y_list):
         get_levenshtein_distance(i14y, logstash_word)
 # print(*distance_touple, sep='\n')
 
-with open ("/mnt/trainingdata/ksummers/levenshtein_raw_epubs.txt", "w", encoding="utf-8") as f:
+with open ("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "w", encoding="utf-8") as f:
     for line in distance_touple:
         f.write(",".join(line)+"\n")

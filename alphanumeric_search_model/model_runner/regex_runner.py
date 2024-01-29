@@ -168,6 +168,8 @@ regex_patterns = [
     # # "([0-9]+[a-z]*§[0-9]+[a-z]*)",
     # # "([a-z]+[0-9]*.[a-z]+[0-9]*)",
 
+    # Add Forward Slashes AFSOC/A3V
+
     "[a-z]+[0-9]*\\.[a-z]+[0-9]+",
     "[a-z]+[0-9]+\\.[a-z]+[0-9]*",
     "[a-z]+[0-9]+\\.[a-z]+[0-9]+",
@@ -309,7 +311,7 @@ args = parser.parse_args()
 # levenshtein_dictionary = load_levenshtein_dictionary("../levenshtein_final.csv")
 # alphanumeric_spacy = spacy.load("/mnt/trainingdata/ksummers/alpha_numeric_ner_model/")
 # alphanumeric_spacy.max_length = 1500000
-levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers/levenshtein_final_epubs.csv")
+levenshtein_dictionary = load_levenshtein_dictionary("/mnt/trainingdata/ksummers/levenshtein_final.csv")
 
 # print(levenshtein_dictionary["18th"])
 # sys.exit(0)

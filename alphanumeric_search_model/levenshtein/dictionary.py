@@ -6,9 +6,26 @@
 #   else create a new source entry and add search value
 # Write out file
 
+import re
+
 levenshtein_dictionary = {}
 
 levenshtein_raw = open("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "r")
+
+def create_changed_punctuation_array(word):
+    punctuation_regex = "[-\s\.§]"
+    punctuation_substitutions = ["-", " ", ".", "§"]
+    word_array = []
+    for letter in punctuation_substitutions:
+        # print(letter)
+        # print(word_array)
+        word_array.append(re.sub(punctuation_regex, letter, word))
+    
+    return list(set(word_array))
+
+# print(create_changed_punctuation_array("DD-214"))
+# print(create_changed_punctuation_array("15th"))
+# print(create_changed_punctuation_array("DD-214"))
 
 for line in levenshtein_raw:
     line_split = line.split(",")
