@@ -21,7 +21,7 @@ def create_changed_punctuation_array(word):
         # print(word_array)
         word_array.append(re.sub(punctuation_regex, letter, word))
     
-    return list(set(word_array))
+    return word_array
 
 # print(create_changed_punctuation_array("DD-214"))
 # print(create_changed_punctuation_array("15th"))
