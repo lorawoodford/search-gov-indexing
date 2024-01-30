@@ -15,7 +15,7 @@ levenshtein_raw = open("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "r")
 def create_changed_punctuation_array(word):
     punctuation_regex = "[-\s\.§]"
     punctuation_substitutions = ["-", " ", ".", "§"]
-    word_array = [word]
+    word_array = [word, re.sub(punctuation_regex, "", word)]
     for letter in punctuation_substitutions:
         # print(letter)
         # print(word_array)
