@@ -30,9 +30,9 @@ def create_changed_punctuation_array(word):
 for line in levenshtein_raw:
     line_split = line.split(",")
     if line_split[0] in levenshtein_dictionary:
-        levenshtein_dictionary[line_split[0]].append(create_changed_punctuation_array(line_split[1]))
+        levenshtein_dictionary[line_split[0]] = levenshtein_dictionary[line_split[0]] + create_changed_punctuation_array(line_split[1])
     else:
-        levenshtein_dictionary[line_split[0]] = [create_changed_punctuation_array(line_split[1])]
+        levenshtein_dictionary[line_split[0]] = create_changed_punctuation_array(line_split[1])
 
 # print(levenshtein_dictionary)
 
