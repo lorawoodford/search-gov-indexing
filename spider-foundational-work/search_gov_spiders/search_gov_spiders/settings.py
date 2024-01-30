@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = "search_gov_spiders.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "Search.gov-ScrapySpider"
+USER_AGENT = "usasearch"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
