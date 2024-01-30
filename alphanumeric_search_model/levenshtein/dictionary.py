@@ -21,7 +21,7 @@ def create_changed_punctuation_array(word):
         # print(word_array)
         word_array.append(re.sub(punctuation_regex, letter, word))
     
-    return word_array
+    return list(set(word_array))
 
 # print(create_changed_punctuation_array("DD-214"))
 # print(create_changed_punctuation_array("15th"))
@@ -45,6 +45,6 @@ sorted_levenshtein.sort()
 
 final_file = open("/mnt/trainingdata/ksummers/levenshtein_final.csv", "w", encoding="utf-8")
 for key in sorted_levenshtein:
-    final_file.write(key + "," + ",".join(levenshtein_dictionary[key]) + "\n")
+    final_file.write(key + "," + ",".join(list(set(levenshtein_dictionary[key]))) + "\n")
 
 final_file.close()
