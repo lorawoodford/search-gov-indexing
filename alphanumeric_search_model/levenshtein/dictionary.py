@@ -15,7 +15,7 @@ levenshtein_raw = open("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "r")
 def create_changed_punctuation_array(word):
     punctuation_regex = "[-\s\.§]"
     punctuation_substitutions = ["-", " ", ".", "§"]
-    word_array = []
+    word_array = [word]
     for letter in punctuation_substitutions:
         # print(letter)
         # print(word_array)
@@ -45,6 +45,6 @@ sorted_levenshtein.sort()
 
 final_file = open("/mnt/trainingdata/ksummers/levenshtein_final.csv", "w", encoding="utf-8")
 for key in sorted_levenshtein:
-    final_file.write(key + "," + ",".join(levenshtein_dictionary[key]) + "\n")
+    final_file.write(key + "," + ",".join(list(set(levenshtein_dictionary[key]))) + "\n")
 
 final_file.close()
