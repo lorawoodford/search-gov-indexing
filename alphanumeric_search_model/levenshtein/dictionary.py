@@ -45,6 +45,6 @@ sorted_levenshtein.sort()
 
 final_file = open("/mnt/trainingdata/ksummers/levenshtein_final.csv", "w", encoding="utf-8")
 for key in sorted_levenshtein:
-    final_file.write(key + "," + ",".join(list(set(levenshtein_dictionary[key]))) + "\n")
+    final_file.write(key + "," + ",".join(levenshtein_dictionary[key]) + "\n")
 
 final_file.close()
