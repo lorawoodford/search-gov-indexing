@@ -45,6 +45,13 @@ class DomainSpider(CrawlSpider):
 
     @staticmethod
     def parse_item(response):
+        """This function gathers the url and the status.
+
+        @url http://quotes.toscrape.com/
+        @returns items 1 2
+        @returns requests 0 0
+        @scrapes Status Link
+        """
         yield {
             "Status": response.status,
             "Link": response.url
