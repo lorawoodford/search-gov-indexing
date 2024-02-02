@@ -57,11 +57,11 @@ query = {
                             #         "domain_name": "www.goarmy.com"
                             #     }
                             # },
-                            # {
-                            #     "term": {
-                            #         "domain_name": "www.gsa.gov"
-                            #     }
-                            # },
+                            {
+                                "term": {
+                                    "domain_name": "www.gsa.gov"
+                                }
+                            },
                             # {
                             #     "term": {
                             #         "domain_name": "www.uscis.gov"
@@ -300,6 +300,12 @@ def push_to_elasticsearch(url, index, documents):
     )
     return tmp
 
+def save_alphanumeric_values_to_file(documents):
+    file = open("/mnt/trainingdata/ksummers/regex_raw.txt", "a", encoding="utf-8", buffering=(pow(2, 20) * 10))
+    for document in documents:
+        f.write(json.dumps(document))
+    f.close()
+
 def verify_alphanumeric_values(values):
     # print(values)
     new_values = []
@@ -336,9 +342,9 @@ def crawl_es_index(es_url, index):
     print("Num Docs: ", len(json_result["hits"]["hits"]))
 
     scroll_id = json_result["_scroll_id"]
-    some_int = 0
-    # while True:
-    while some_int < 2:
+    # some_int = 0
+    while True:
+    # while some_int < 2:
         # print(doc_count, "\t", docs_processed, "\t", (doc_count - docs_processed))
         if len(json_result["hits"]["hits"]) == 0:
             # clear_scroll_context(es_url[es_node], scroll_id)
@@ -362,10 +368,15 @@ def crawl_es_index(es_url, index):
         
         # print(temp_doc_list)
 
-        response = push_to_elasticsearch(es_url[es_node], index + "_regex_py", temp_doc_list)
-        if(response.status_code == 400):
-            print(response.json())
-            # return
+        # Change to write out to a file instead of ES
+        save_alphanumeric_values_to_file(temp_doc_list)
+
+        # Using ElasticSearch for storing intermediaries was a bad idea, as only
+        # about 10000 values per a domain could be retrieved without changing ElasticSearch.
+        # response = push_to_elasticsearch(es_url[es_node], index + "_regex_py", temp_doc_list)
+        # if(response.status_code == 400):
+        #     print(response.json())
+        #     # return
             
         results = query_elasticsearch(es_url[es_node], "/_search/scroll", json.dumps({
             "scroll" : "10m",
@@ -373,7 +384,7 @@ def crawl_es_index(es_url, index):
         }))
         json_result = results.json()
         es_node = (es_node + 1) % len(es_urls)
-        some_int = some_int + 1
+        # some_int = some_int + 1
     # return
     clear_scroll_context(es_url[es_node], scroll_id)
 

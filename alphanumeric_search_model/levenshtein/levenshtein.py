@@ -83,6 +83,12 @@ def alphanumeric_levenshtein_comparitor(word):
     print("\t\t", hamming(word, new_word))
     print("\t\t", distance(word, new_word))
 
+def read_in_alphanumeric_values_from_file(filename = "/mnt/trainingdata/ksummers/regex_raw.txt"):
+    with open(filename, "r", encoding="utf-8") as f:
+        line = json.loads(f.readline())
+        i14y_list = i14y_list + line["regex_patterns"]
+
+
 def generate_list_from_i14y():
     search_endpoint = "production-i14y-documents-searchgov-v6-reindex_keyword_regex_py/_search"
     r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "domain_name"))
@@ -113,9 +119,12 @@ def generate_list_from_logstash_requests():
 
 
 #query_elasticsearch("production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search", json.dumps(query1))
-generate_list_from_i14y()
+# generate_list_from_i14y()
+
+read_in_alphanumeric_values_from_file()
+
 # some_list = i14y_list.sort()
-print(i14y_list)
+# print(i14y_list)
 print(len(set(i14y_list)))
 # generate_list_from_logstash_requests()
 # print(logstash_list)
