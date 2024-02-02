@@ -82,11 +82,16 @@ def alphanumeric_levenshtein_comparitor(word):
     print("\t\t", hamming(word, new_word))
     print("\t\t", distance(word, new_word))
 
-def read_in_alphanumeric_values_from_file(filename = "/mnt/trainingdata/ksummers/regex_raw.txt"):
+def read_in_alphanumeric_values_from_file(filename):
     alphanumeric_list = []
     with open(filename, "r", encoding="utf-8") as f:
-        line = json.loads(f.readline())
-        alphanumeric_list = alphanumeric_list + line["regex_patterns"]
+        while raw_line := f.readline():
+        # line = json.loads(f.readline())
+            line = json.loads(raw_line)
+            # print(line)
+            alphanumeric_list = alphanumeric_list + line["regex_patterns"]
+            # print(alphanumeric_list)
+    return alphanumeric_list
 
 
 def generate_list_from_i14y():
@@ -121,10 +126,11 @@ def generate_list_from_logstash_requests():
 #query_elasticsearch("production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search", json.dumps(query1))
 # generate_list_from_i14y()
 
-i14y_list = read_in_alphanumeric_values_from_file()
+i14y_list = read_in_alphanumeric_values_from_file("/mnt/trainingdata/ksummers/regex_raw.txt")
+# i14y_list = read_in_alphanumeric_values_from_file("test/regex_raw.txt")
 
 # some_list = i14y_list.sort()
-# print(i14y_list)
+print(i14y_list)
 print(len(set(i14y_list)))
 # generate_list_from_logstash_requests()
 # print(logstash_list)
