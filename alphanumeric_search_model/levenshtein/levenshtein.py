@@ -50,7 +50,6 @@ query2 = {
     "size" : 0
 }
 
-i14y_list = []
 logstash_list = []
 
 distance_touple = []
@@ -84,9 +83,10 @@ def alphanumeric_levenshtein_comparitor(word):
     print("\t\t", distance(word, new_word))
 
 def read_in_alphanumeric_values_from_file(filename = "/mnt/trainingdata/ksummers/regex_raw.txt"):
+    alphanumeric_list = []
     with open(filename, "r", encoding="utf-8") as f:
         line = json.loads(f.readline())
-        i14y_list = i14y_list + line["regex_patterns"]
+        alphanumeric_list = alphanumeric_list + line["regex_patterns"]
 
 
 def generate_list_from_i14y():
@@ -121,7 +121,7 @@ def generate_list_from_logstash_requests():
 #query_elasticsearch("production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search", json.dumps(query1))
 # generate_list_from_i14y()
 
-read_in_alphanumeric_values_from_file()
+i14y_list = read_in_alphanumeric_values_from_file()
 
 # some_list = i14y_list.sort()
 # print(i14y_list)
