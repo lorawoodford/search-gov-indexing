@@ -303,7 +303,7 @@ def push_to_elasticsearch(url, index, documents):
 def save_alphanumeric_values_to_file(documents):
     file = open("/mnt/trainingdata/ksummers/regex_raw.txt", "a", encoding="utf-8", buffering=(pow(2, 20) * 10))
     for document in documents:
-        for word in document["regex_patterns"]
+        for word in document["regex_patterns"]:
             file.write(word + "\n")
     file.close()
 
