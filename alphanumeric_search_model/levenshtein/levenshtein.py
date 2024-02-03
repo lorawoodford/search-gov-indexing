@@ -85,11 +85,10 @@ def alphanumeric_levenshtein_comparitor(word):
 def read_in_alphanumeric_values_from_file(filename):
     alphanumeric_list = []
     with open(filename, "r", encoding="utf-8") as f:
-        while raw_line := f.readline():
+        while line := f.readline():
         # line = json.loads(f.readline())
-            line = json.loads(raw_line)
             # print(line)
-            alphanumeric_list = alphanumeric_list + line["regex_patterns"]
+            alphanumeric_list.append(line)
             # print(alphanumeric_list)
     return alphanumeric_list
 
