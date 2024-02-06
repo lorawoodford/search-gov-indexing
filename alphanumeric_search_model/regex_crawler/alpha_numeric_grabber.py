@@ -147,12 +147,13 @@ es_urls = [
 
 # Although Python will do case insensitive searching for regex patterns, ES 7.17 doesn't appear to 
 # do searching with case insensitivity enabled.
+# The commented values can be removed at a later date, Keep the section (§) values
 regex_expressions = [
-    # "[0-9]+[a-z]+",
-    # # "[0-9]+[A-Z]+",
+    "[0-9]+[a-z]+",
+    # "[0-9]+[A-Z]+",
 
-    # "[a-z]+[0-9]+",
-    # # "[A-Z]+[0-9]+",
+    "[a-z]+[0-9]+",
+    # "[A-Z]+[0-9]+",
 
     "[a-z]+[0-9]+-[a-z]+[0-9]*",
     # "[A-Z]+[0-9]+-[a-z]+[0-9]*",
@@ -287,6 +288,7 @@ def clear_scroll_context(url, scroll_id):
         url + "/_search/scroll/" + str(scroll_id)
     )
 
+# In moving to using flat files this function is depricated
 def push_to_elasticsearch(url, index, documents):
     # Use Partial document update to push to ElasticSearch
     es_payload = []
@@ -317,6 +319,7 @@ def verify_alphanumeric_values(values):
             new_values.append(alphanumeric)
     return new_values
 
+# This needs to be updated to only keep the relevant alphanumeric strings
 def create_i14y_doc(doc, regex, field):
     # print(regex, "\t", doc["_source"][field])
     # print(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))

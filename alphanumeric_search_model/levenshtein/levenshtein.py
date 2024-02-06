@@ -70,6 +70,8 @@ def get_levenshtein_distance(word_one, word_two):
     if lratio > 0.0:
         distance_touple.append([word_one, word_two, str(lratio)])
 
+
+# This Function is currently unused for any purposes as of 2 Feb 2024
 def alphanumeric_levenshtein_comparitor(word):
     print(word)
     # Take the word
@@ -93,6 +95,7 @@ def read_in_alphanumeric_values_from_file(filename):
     return alphanumeric_list
 
 
+# This uses ElasticSearch as an intermediary, as such is deprecated
 def generate_list_from_i14y():
     search_endpoint = "production-i14y-documents-searchgov-v6-reindex_keyword_regex_py/_search"
     r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "domain_name"))
@@ -110,6 +113,7 @@ def generate_list_from_i14y():
             # print(regex_pattern["key"])
             i14y_list.append(regex_pattern["key"])
 
+# This uses ElasticSearch as an intermediary, as such is deprecated
 def generate_list_from_logstash_requests():
     search_endpoint = "human-logstash-_regex/_search"
     r = query_elasticsearch(search_endpoint, json.dumps(query1).replace("REPLACE_THIS", "affiliate"))
