@@ -8,9 +8,7 @@
 
 import re
 
-levenshtein_dictionary = {}
-
-levenshtein_raw = open("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "r")
+# levenshtein_dictionary = {}
 
 def create_changed_punctuation_array(word):
     punctuation_regex = "[-\s\.§]"
@@ -27,24 +25,40 @@ def create_changed_punctuation_array(word):
 # print(create_changed_punctuation_array("15th"))
 # print(create_changed_punctuation_array("DD-214"))
 
-for line in levenshtein_raw:
-    line_split = line.split(",")
-    if line_split[0] in levenshtein_dictionary:
-        levenshtein_dictionary[line_split[0]] = levenshtein_dictionary[line_split[0]] + create_changed_punctuation_array(line_split[1])
-    else:
-        levenshtein_dictionary[line_split[0]] = create_changed_punctuation_array(line_split[1])
+def generate_leveshtein_dictionary(raw_lines):
+    levenshtein_dictionary = {}
+    for line in raw_lines:
+        line_split = line.split(",")
+        if line_split[0] in levenshtein_dictionary:
+            levenshtein_dictionary[line_split[0]] = levenshtein_dictionary[line_split[0]] + create_changed_punctuation_array(line_split[1])
+        else:
+            levenshtein_dictionary[line_split[0]] = create_changed_punctuation_array(line_split[1])
+    
+    return levenshtein_dictionary
+
+# for line in levenshtein_raw:
+#     line_split = line.split(",")
+#     if line_split[0] in levenshtein_dictionary:
+#         levenshtein_dictionary[line_split[0]] = levenshtein_dictionary[line_split[0]] + create_changed_punctuation_array(line_split[1])
+#     else:
+#         levenshtein_dictionary[line_split[0]] = create_changed_punctuation_array(line_split[1])
 
 # print(levenshtein_dictionary)
 
-levenshtein_raw.close()
+if __name__ == "__main__":
+    levenshtein_raw = open("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "r")
 
-sorted_levenshtein = list(levenshtein_dictionary.keys())
-sorted_levenshtein.sort()
+    levenshtein_dictionary = generate_leveshtein_dictionary(levenshtein_raw)
 
-# print (sorted_levenshtein)
+    levenshtein_raw.close()
 
-final_file = open("/mnt/trainingdata/ksummers/levenshtein_final.csv", "w", encoding="utf-8")
-for key in sorted_levenshtein:
-    final_file.write(key + "," + ",".join(list(set(levenshtein_dictionary[key]))) + "\n")
+    sorted_levenshtein = list(levenshtein_dictionary.keys())
+    sorted_levenshtein.sort()
 
-final_file.close()
+    # print (sorted_levenshtein)
+
+    final_file = open("/mnt/trainingdata/ksummers/levenshtein_final.csv", "w", encoding="utf-8")
+    for key in sorted_levenshtein:
+        final_file.write(key + "," + ",".join(list(set(levenshtein_dictionary[key]))) + "\n")
+
+    final_file.close()

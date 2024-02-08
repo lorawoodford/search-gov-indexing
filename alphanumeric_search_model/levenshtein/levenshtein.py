@@ -69,13 +69,16 @@ def get_levenshtein_distance(word_one, word_two):
     lratio = ratio(word_one, word_two, score_cutoff=0.7)
     if lratio > 0.0:
         distance_touple.append([word_one, word_two, str(lratio)])
+        return(lratio)
 
 
 # This Function is currently unused for any purposes as of 2 Feb 2024
+# If modifying this function at a later date, be sure to update the test
+# as the test only passes because no tests are present.
 def alphanumeric_levenshtein_comparitor(word):
     print(word)
     # Take the word
-    new_word = re.sub("\W", " ", word)
+    new_word = re.sub("W", " ", word)
     print("\t",new_word)
     # Replace the Non Alphanumeric chars with spaces
     # Split into array based on space
@@ -129,20 +132,21 @@ def generate_list_from_logstash_requests():
 #query_elasticsearch("production-i14y-documents-searchgov-v6-reindex_keyword_regex/_search", json.dumps(query1))
 # generate_list_from_i14y()
 
-i14y_list = read_in_alphanumeric_values_from_file("/mnt/trainingdata/ksummers/regex_raw.txt")
-# i14y_list = read_in_alphanumeric_values_from_file("test/regex_raw.txt")
+if __name__ == "__main__": 
+    i14y_list = read_in_alphanumeric_values_from_file("/mnt/trainingdata/ksummers/regex_raw.txt")
+    # i14y_list = read_in_alphanumeric_values_from_file("test/regex_raw.txt")
 
-# some_list = i14y_list.sort()
-print(i14y_list)
-print(len(set(i14y_list)))
-# generate_list_from_logstash_requests()
-# print(logstash_list)
-# print(len(set(logstash_list)))
-for i14y in set(i14y_list):
-    for logstash_word in set(i14y_list):
-        get_levenshtein_distance(i14y, logstash_word)
-# print(*distance_touple, sep='\n')
+    # some_list = i14y_list.sort()
+    print(i14y_list)
+    print(len(set(i14y_list)))
+    # generate_list_from_logstash_requests()
+    # print(logstash_list)
+    # print(len(set(logstash_list)))
+    for i14y in set(i14y_list):
+        for logstash_word in set(i14y_list):
+            get_levenshtein_distance(i14y, logstash_word)
+    # print(*distance_touple, sep='\n')
 
-with open ("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "w", encoding="utf-8") as f:
-    for line in distance_touple:
-        f.write(",".join(line)+"\n")
+    with open ("/mnt/trainingdata/ksummers/levenshtein_raw.txt", "w", encoding="utf-8") as f:
+        for line in distance_touple:
+            f.write(",".join(line)+"\n")
