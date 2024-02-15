@@ -2,6 +2,8 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/spider-foundational-work/search_gov_spiders/search_gov_spiders/spiders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/spider-foundational-work/search_gov_spiders/search_gov_spiders/spiders/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/spider-foundational-work/search_gov_spiders/.scrapy" />
       <excludeFolder url="file://$MODULE_DIR$/spider-foundational-work/search_gov_spiders/search_gov_spiders/spiders/scrapy_urls" />
     </content>

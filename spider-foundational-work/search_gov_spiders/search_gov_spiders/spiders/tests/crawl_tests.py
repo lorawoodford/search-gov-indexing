@@ -1,9 +1,16 @@
 import pprint
+import os
 import sys
 from unittest.case import TestCase
-from domain_spider import DomainSpider
 
+# sys.path.append('../')
+sys.path.append(os.path.abspath('../'))
+
+from domain_spider import DomainSpider
 from mocks.mock_response import return_response
+
+# from domain_spider import DomainSpider
+# from mocks.mock_response import return_response
 
 
 class SpiderCrawlTest(TestCase):
