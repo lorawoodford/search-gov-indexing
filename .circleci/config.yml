@@ -58,7 +58,7 @@ jobs:
       - run:
 #          command: |
 #            pytest --version
-          command: python -m unittest discover -s crawl_tests -p 'crawl_tests.py'
+          command: python -m unittest discover test
           name: Test
 workflows:
   main:
