@@ -319,6 +319,17 @@ def verify_alphanumeric_values(values):
             new_values.append(alphanumeric)
     return new_values
 
+def create_accordian_from_regex_string(alpha_numeric_string):
+    punctuation_regex = "[-\s\.§]"
+    punctuation_substitutions = ["-", " ", ".", "§"]
+    word_array = [word, re.sub(punctuation_regex, "", word)]
+    for letter in punctuation_substitutions:
+        # print(letter)
+        # print(word_array)
+        word_array.append(re.sub(punctuation_regex, letter, word))
+    
+    return list(set(word_array))
+
 # This needs to be updated to only keep the relevant alphanumeric strings
 def create_i14y_doc(doc, regex, field):
     # print(regex, "\t", doc["_source"][field])
@@ -326,6 +337,8 @@ def create_i14y_doc(doc, regex, field):
     # verify_alphanumeric_values(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))
     return {
         "domain_name" : doc["_source"]["domain_name"],
+        "extension": doc["_source"]["extension"],
+        "mime_type": doc["_source"]["mime_type"]
         "regex_patterns" : verify_alphanumeric_values(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field], re.IGNORECASE))
     }
     # return
@@ -373,14 +386,14 @@ def crawl_es_index(es_url, index):
         # print(temp_doc_list)
 
         # Change to write out to a file instead of ES
-        save_alphanumeric_values_to_file(temp_doc_list)
+        # save_alphanumeric_values_to_file(temp_doc_list)
 
         # Using ElasticSearch for storing intermediaries was a bad idea, as only
         # about 10000 values per a domain could be retrieved without changing ElasticSearch.
-        # response = push_to_elasticsearch(es_url[es_node], index + "_regex_py", temp_doc_list)
-        # if(response.status_code == 400):
-        #     print(response.json())
-        #     # return
+        response = push_to_elasticsearch(es_url[es_node], "regex_analytics_py", temp_doc_list)
+        if(response.status_code == 400):
+            print(response.json())
+            # return
             
         results = query_elasticsearch(es_url[es_node], "/_search/scroll", json.dumps({
             "scroll" : "10m",
