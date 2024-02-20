@@ -59,16 +59,16 @@ query = {
                                     "domain_name": "www.e-publishing.af.mil"
                                 }
                             },
-                            # {
-                            #     "term": {
-                            #         "domain_name": "www.goarmy.com"
-                            #     }
-                            # },
-                            # {
-                            #     "term": {
-                            #         "domain_name": "www.gsa.gov"
-                            #     }
-                            # },
+                            {
+                                "term": {
+                                    "domain_name": "www.goarmy.com"
+                                }
+                            },
+                            {
+                                "term": {
+                                    "domain_name": "www.gsa.gov"
+                                }
+                            },
                             # {
                             #     "term": {
                             #         "domain_name": "www.uscis.gov"
@@ -232,14 +232,27 @@ def load_levenshtein_dictionary(file_name):
     dict_file.close()
     return levenshtein_dictionary
 
+def create_changed_punctuation_array(word):
+    punctuation_regex = "[-\s\.§]"
+    punctuation_substitutions = ["-", " ", ".", "§"]
+    word_array = [word, re.sub(punctuation_regex, "", word)]
+    for letter in punctuation_substitutions:
+        # print(letter)
+        # print(word_array)
+        word_array.append(re.sub(punctuation_regex, letter, word))
+    
+    return list(set(word_array))
+
+
 def process_alphanumeric_document(document):
     alpha_numerics = []
     for regexp in regex_patterns:
         temp_ans = re.findall(regexp.replace("\\\\", "\\"), document, re.IGNORECASE)
         temp_ans = list(set(temp_ans))
         for alpha_numeric in temp_ans:
-            if alpha_numeric in levenshtein_dictionary:
-                alpha_numerics.append(levenshtein_dictionary[alpha_numeric])
+            alpha_numerics.append(create_changed_punctuation_array(alpha_numeric))
+            # if alpha_numeric in levenshtein_dictionary:
+            #     alpha_numerics.append(levenshtein_dictionary[alpha_numeric])
     return alpha_numerics
 
 def collect_memory_stats():
@@ -249,7 +262,7 @@ def collect_memory_stats():
     file.write(str(h.heap()))
     file.write(str("\n"))
 
-@profile
+# @profile
 def crawl_es_index(es_client, index, start_date):
     # Do the actual crawling
     # Call scroll
