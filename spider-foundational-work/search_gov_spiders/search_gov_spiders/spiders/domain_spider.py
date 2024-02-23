@@ -1,5 +1,20 @@
+import pprint
+import sys
+import urllib.parse
+
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
+
+# sys.path.append('../../../')
+
+starting_urls = '../../../utility-scripts/startingUrls.txt'
+start_urls_list = []
+with open(starting_urls) as file:
+    while line := file.readline():
+        # start_urls_list.append(urllib.parse.quote_plus(line.rstrip()))
+        start_urls_list.append(line.rstrip())
+
+pprint.pprint(start_urls_list)
 
 
 # scrapy command for crawling domain/site
@@ -13,9 +28,10 @@ class DomainSpider(CrawlSpider):
     def __init__(self, domain=None, urls=None, *args, **kwargs):
         super(DomainSpider, self).__init__(*args, **kwargs)
         # allowed_domains = ["travel.dod.mil"]
-        self.allowed_domains = [domain]
+        # self.allowed_domains = [domain]
         # start_urls = ["https://www.travel.dod.mil/"]
-        self.start_urls = [urls]
+        # self.start_urls = [urls]
+        self.start_urls = start_urls_list
 
     # file type exclusions
     rules = (Rule(LinkExtractor(allow=(),
