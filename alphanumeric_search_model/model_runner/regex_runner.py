@@ -49,26 +49,26 @@ query = {
                 {
                     "bool": {
                         "should" : [
-                            {
-                                "term": {
-                                    "domain_name": "static.e-publishing.af.mil"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.e-publishing.af.mil"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.goarmy.com"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.gsa.gov"
-                                }
-                            },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "static.e-publishing.af.mil"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.e-publishing.af.mil"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.goarmy.com"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.gsa.gov"
+                            #     }
+                            # },
                             # {
                             #     "term": {
                             #         "domain_name": "www.uscis.gov"
@@ -243,12 +243,21 @@ def create_changed_punctuation_array(word):
     
     return list(set(word_array))
 
+def verify_alphanumeric_values(values):
+    # print(values)
+    new_values = []
+    for alphanumeric in values:
+        punc_free = re.sub("[-\s\.]", "", alphanumeric)
+        # print(alphanumeric, "\t", punc_free, "\t", re.sub("\d", "", punc_free).isalpha(), "\t", re.sub("[a-zA-Z]", "", punc_free).isnumeric())
+        if re.sub("\d", "", punc_free).isalpha() and re.sub("[a-zA-Z]", "", punc_free).isnumeric():
+            new_values.append(alphanumeric)
+    return new_values
 
 def process_alphanumeric_document(document):
     alpha_numerics = []
     for regexp in regex_patterns:
         temp_ans = re.findall(regexp.replace("\\\\", "\\"), document, re.IGNORECASE)
-        temp_ans = list(set(temp_ans))
+        temp_ans = list(set(verify_alphanumeric_values(temp_ans)))
         for alpha_numeric in temp_ans:
             alpha_numerics.append(create_changed_punctuation_array(alpha_numeric))
             # if alpha_numeric in levenshtein_dictionary:
@@ -280,9 +289,10 @@ def crawl_es_index(es_client, index, start_date):
                 print("Number of documents more than 3MB: ", num_docs_more_than_3m)
                 break
 
-            if num_runs == 10:
+            if num_runs == 100:
                 num_runs = 0
                 collect_memory_stats()
+                print(str(datetime.datetime.now()), " Processed 10K Documents")
             
             # Process documents
             modified_documents = []
