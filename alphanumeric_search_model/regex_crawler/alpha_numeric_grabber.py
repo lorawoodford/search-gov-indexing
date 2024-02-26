@@ -337,8 +337,8 @@ def create_i14y_doc(doc, regex, field):
     # verify_alphanumeric_values(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field]))
     return {
         "domain_name" : doc["_source"]["domain_name"],
-        "extension": doc["_source"]["extension"],
-        "mime_type": doc["_source"]["mime_type"],
+        "extension": (doc["_source"]["extension"] if(doc["_source"].has_key("extension")) else None),
+        "mime_type": (doc["_source"]["mime_type"] if(doc["_source"].has_key("mime_type")) else None),
         "regex_patterns" : verify_alphanumeric_values(re.findall(regex.replace("\\\\", "\\"), doc["_source"][field], re.IGNORECASE))
     }
     # return
