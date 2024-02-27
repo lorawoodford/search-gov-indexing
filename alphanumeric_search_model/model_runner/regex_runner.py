@@ -257,7 +257,7 @@ def process_alphanumeric_document(document):
     alpha_numerics = []
     for regexp in regex_patterns:
         temp_ans = re.findall(regexp.replace("\\\\", "\\"), document, re.IGNORECASE)
-        temp_ans = list(set(verify_alphanumeric_values(temp_ans)))
+        temp_ans = verify_alphanumeric_values(list(set(temp_ans)))
         for alpha_numeric in temp_ans:
             alpha_numerics.append(create_changed_punctuation_array(alpha_numeric))
             # if alpha_numeric in levenshtein_dictionary:
