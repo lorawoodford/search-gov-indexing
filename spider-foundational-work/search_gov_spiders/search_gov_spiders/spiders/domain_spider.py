@@ -1,20 +1,17 @@
-import pprint
-import sys
-import urllib.parse
-
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
-
-# sys.path.append('../../../')
 
 starting_urls = '../../../utility-scripts/startingUrls.txt'
 start_urls_list = []
 with open(starting_urls) as file:
     while line := file.readline():
-        # start_urls_list.append(urllib.parse.quote_plus(line.rstrip()))
         start_urls_list.append(line.rstrip())
 
-pprint.pprint(start_urls_list)
+domains = '../../../utility-scripts/domains.txt'
+domains_list = []
+with open(domains) as file:
+    while line := file.readline():
+        domains_list.append(line.rstrip())
 
 
 # scrapy command for crawling domain/site
@@ -27,11 +24,8 @@ class DomainSpider(CrawlSpider):
 
     def __init__(self, domain=None, urls=None, *args, **kwargs):
         super(DomainSpider, self).__init__(*args, **kwargs)
-        # allowed_domains = ["travel.dod.mil"]
-        # self.allowed_domains = [domain]
-        # start_urls = ["https://www.travel.dod.mil/"]
-        # self.start_urls = [urls]
-        self.start_urls = start_urls_list
+        self.allowed_domains = [domain] if domain else domains_list
+        self.start_urls = [urls] if urls else start_urls_list
 
     # file type exclusions
     rules = (Rule(LinkExtractor(allow=(),
@@ -56,7 +50,18 @@ class DomainSpider(CrawlSpider):
                                     'jpg',
                                     'jpeg',
                                     'png',
-                                    'svg'
+                                    'exe',
+                                    'svg',
+                                    'ppt',
+                                    'pptx',
+                                    'ics',
+                                    'nc',
+                                    'tif',
+                                    'prj',
+                                    'tar',
+                                    'tar.gz',
+                                    'rss',
+                                    'sfx'
                                 ], unique=True), callback="parse_item", follow=True),)
 
     @staticmethod
