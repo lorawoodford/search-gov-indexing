@@ -291,7 +291,7 @@ def crawl_es_index(es_client, index, start_date):
 
             if num_runs == 100:
                 num_runs = 0
-                collect_memory_stats()
+                # collect_memory_stats()
                 print(str(datetime.datetime.now()), " Processed 10K Documents")
             
             # Process documents
