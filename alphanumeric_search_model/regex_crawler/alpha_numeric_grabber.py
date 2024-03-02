@@ -42,26 +42,26 @@ query = {
                 {
                     "bool": {
                         "should" : [
-                            {
-                                "term": {
-                                    "domain_name": "static.e-publishing.af.mil"
-                                }
-                            },
-                            {
-                                "term": {
-                                    "domain_name": "www.e-publishing.af.mil"
-                                }
-                            },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "static.e-publishing.af.mil"
+                            #     }
+                            # },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.e-publishing.af.mil"
+                            #     }
+                            # },
                             # {
                             #     "term": {
                             #         "domain_name": "www.goarmy.com"
                             #     }
                             # },
-                            {
-                                "term": {
-                                    "domain_name": "www.gsa.gov"
-                                }
-                            },
+                            # {
+                            #     "term": {
+                            #         "domain_name": "www.gsa.gov"
+                            #     }
+                            # },
                             # {
                             #     "term": {
                             #         "domain_name": "www.uscis.gov"
