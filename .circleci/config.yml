@@ -58,7 +58,7 @@ jobs:
       - run:
 #          command: |
 #            pytest --version
-          command: python -m unittest discover spiders
+          command: python -m unittest discover -s test
           name: Test
 workflows:
   main:
