@@ -1,66 +1,19 @@
-#version: 2.1
-#orbs:
-#  python: circleci/python@2.0.3
-#  heroku: circleci/heroku@1.2.6
-#
-#jobs:
-#  build_and_test: # this can be any name you choose
-#    executor: python/default
-#    steps:
-#      - checkout
-#      - python/install-packages:
-#          pkg-manager: pip
-#      - run:
-#          name: Run tests
-##          command: python -m pytest
-#          command: python -m unittest discover -s spiders -p 'crawl_tests.py'
-#      - persist_to_workspace:
-#          root: ~/project
-#          paths:
-#            - .
-#
-#  deploy: # this can be any name you choose
-#    executor: python/default
-#    steps:
-#      - attach_workspace:
-#          at: ~/project
-#      - heroku/deploy-via-git:
-#          force: true # force push when pushing to the heroku remote, see: https://devcenter.heroku.com/articles/git
-#
-#workflows:
-#  test_my_app:
-#    jobs:
-#      - build_and_test
-#      - deploy:
-#          requires:
-#            - build_and_test # only deploy if the build_and_test job has completed
-#          filters:
-#            branches:
-#              only: main # only deploy when on main
-
 version: '2.1'
 orbs:
   python: circleci/python@2.1.1
 jobs:
-  build:
-    executor: python/default
+  build_and_test:
+    executor: 
+      name: python/default
     steps:
       - checkout
       - python/install-packages:
-          pkg-manager: pip
-      - python/install-packages:
           pip-dependency-file: requirements.txt
           pkg-manager: pip
-#      - python/install-packages:
-#          args: pytest
-#          pkg-manager: pip
-#          pypi-cache: false
       - run:
-#          command: |
-#            pytest --version
-          command: python -m unittest discover -s test
-          name: Test
+          name: Run tests
+          command: python -m unittest discover -s test -p "crawl_tests.py"
 workflows:
   main:
     jobs:
-      - build
+      - build_and_test
